@@ -1,0 +1,46 @@
+@import "styles/fonts.scss";
+@import "styles/variables.scss";
+
+* {
+  box-sizing: border-box;
+  font-family: "Mont", sans-serif;
+  font-weight: 500;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  color: $black;
+}
+
+.modal-dialog{
+  max-width: 950px!important;
+  .modal-content{
+    background-color: $blue!important;
+    // h1, h2, h3, h4, h5, h6{
+    //   color: $white!important;
+    // }
+    .modal-header{
+      border-bottom: 0!important;
+      padding-bottom: 0;
+    }
+    .modal-footer{
+      border-top: 0!important;
+    }
+  }
+}
