@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, ModalBody } from "reactstrap";
+import { Modal, ModalHeader, ModalBody } from "reactstrap";
 
 import { availablePlans } from "~lib/dummy";
 import CurrentPlan from "./CurrentPlan";
@@ -38,7 +38,10 @@ const AvailablePlans = () => {
                     </div>
                 ))}
             </div>
-            <Modal toggle={() => setModalOpen(!modalOpen)} isOpen={modalOpen}>
+            <Modal toggle={() => setModalOpen(!modalOpen)} isOpen={modalOpen} modalClassName="modifyPlanModal">
+                <ModalHeader>
+                    Add Crimson Glory
+                </ModalHeader>
                 <ModalBody>
                     <CurrentPlan />
                 </ModalBody>

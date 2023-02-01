@@ -7,6 +7,7 @@ import styles from "~styles/components/modifyplan/currentplan.module.scss";
 const CurrentPlan = () => {
   const [pinchCheckbox, setPinchCheckbox] = useState(false);
   const [potCheckbox, setPotCheckbox] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   return (
     <div className={styles.container}>
@@ -36,13 +37,15 @@ const CurrentPlan = () => {
             <button>Late</button>
           </div>
           <div className={styles.successionContainer}>
-            <div className={styles.successionTextContainer}>
-              <h4>Sucessions</h4>
-              <h5>You can always adjust spacing later.</h5>
-            </div>
-            <div className={styles.successionButtonsContainer}>
-              <button># Plantings</button>
-              <button>Days Between</button>
+            <div className={styles.successionContainer1}>
+              <div className={styles.successionTextContainer}>
+                <h4>Sucessions</h4>
+                <h5>You can always adjust spacing later.</h5>
+              </div>
+              <div className={styles.successionButtonsContainer}>
+                <button><span>6</span> Plantings</button>
+                <button><span>14</span> Days Between</button>
+              </div>
             </div>
             <div className={styles.successionCheckboxesContainer}>
               <div className={styles.successionCheckboxRow}>
@@ -68,8 +71,8 @@ const CurrentPlan = () => {
         </div>
       </div>
       <div className={styles.buttonsContainer}>
-        <button>Save</button>
-        <button>Reset</button>
+        <button onClick={() => setModalOpen(!modalOpen)}>Save Changes</button>
+        <button onClick={() => setModalOpen(!modalOpen)}>Reset</button>
       </div>
     </div>
   );

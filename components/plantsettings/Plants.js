@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, ModalBody } from "reactstrap";
+import { Modal, ModalHeader, ModalBody } from "reactstrap";
 
 import { settingsPlants } from "~lib/dummy";
 
@@ -64,11 +64,9 @@ const Plants = () => {
                 ))}
             </div>
             <Modal toggle={() => setModalOpen(!modalOpen)} isOpen={modalOpen}>
-                <div className="modal-header">
-                    <h5 className="modal-title" id="exampleModalLabel">
-                        Add New Custom Plant
-                    </h5>
-                </div>
+                <ModalHeader>
+                    Add New Custom Plant
+                </ModalHeader>
                 <ModalBody>
                     <div className={styles.plantsContainer}>
                         <div className={styles.modalImage}></div>

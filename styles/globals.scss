@@ -32,15 +32,37 @@ h6 {
   max-width: 950px!important;
   .modal-content{
     background-color: $blue!important;
-    // h1, h2, h3, h4, h5, h6{
-    //   color: $white!important;
-    // }
+    h1, h2, h3, h4, h5, h6{
+      color: $white;
+    }
     .modal-header{
       border-bottom: 0!important;
       padding-bottom: 0;
     }
     .modal-footer{
       border-top: 0!important;
+    }
+    h4{
+      font-size: 1rem;
+    }
+  }
+}
+
+.modifyPlanModal .modal-dialog {
+  max-width: 1200px !important;
+  .modal-header{
+    justify-content: center;
+    h5{
+      color: $white!important;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-top: 1rem;
+    }
+  }
+  .modal-content{
+    h1, h2, h3, h4, h5, h6{
+      color: $black;
+      margin-bottom: 0;
     }
   }
 }
