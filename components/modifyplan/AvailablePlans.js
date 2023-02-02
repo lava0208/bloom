@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, ModalHeader, ModalBody } from "reactstrap";
+import { Modal, ModalBody } from "reactstrap";
 
 import { availablePlans } from "~lib/dummy";
 import CurrentPlan from "./CurrentPlan";
@@ -12,6 +12,12 @@ const AvailablePlans = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const openCreateModal = () => {
         setModalOpen(true);
+    }
+    const savePlan = () => {
+        setModalOpen(false);
+    }
+    const resetPlan = () => {
+        setModalOpen(false);
     }
     return (
         <>
@@ -38,12 +44,9 @@ const AvailablePlans = () => {
                     </div>
                 ))}
             </div>
-            <Modal toggle={() => setModalOpen(!modalOpen)} isOpen={modalOpen} modalClassName="modifyPlanModal">
-                <ModalHeader>
-                    Add Crimson Glory
-                </ModalHeader>
+            <Modal toggle={() => setModalOpen(!modalOpen)} isOpen={modalOpen} centered modalClassName="modifyPlanModal">
                 <ModalBody>
-                    <CurrentPlan />
+                    <CurrentPlan title="Add Crimson Glory" savePlan={savePlan} resetPlan={resetPlan} />
                 </ModalBody>
             </Modal>
         </>

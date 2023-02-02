@@ -1,7 +1,6 @@
 @import "~sass-variables";
 
 .container {
-  height: 100vh;
   width: 16rem;
   background: $blue;
   border-top-left-radius: 10px;
@@ -15,6 +14,30 @@
     color: $white;
     font-weight: 700;
     margin-top: 1.5rem;
+  }
+  .planSettings{
+    margin-bottom: 2rem;
+    padding: 0.4rem 1.5rem;
+    border-radius: 15px;
+    width: 85%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border: 5px solid transparent;
+    background-color: transparent;
+    h3 {
+      color: $white;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 0;
+    }
+    &:hover{
+      background-color: $white;
+      h3{
+        color: $blue;
+      }
+    }
   }
 }
 
@@ -32,6 +55,35 @@
   margin: 0 0.6rem 1rem 0.6rem;
   padding: 1rem;
   border-radius: 20px;
+  position: relative;
+  .plantHoverText{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    border-radius: 20px;
+    background: rgba($blue,0.54);
+    button{
+      color: $white;
+      font-weight: 700;
+      font-size: 1rem;
+      border: 5px solid $blue;
+      background: $blue;
+      border-radius: 9px;
+      padding: 0px 1rem;
+      cursor: pointer;
+      margin: 0 5px;
+      &:hover{
+        background: $purple;
+        border-color: $purple;
+      }
+    }
+  }
 }
 
 .planHeader {

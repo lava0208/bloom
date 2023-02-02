@@ -63,7 +63,7 @@ const Plants = () => {
                     </div>
                 ))}
             </div>
-            <Modal toggle={() => setModalOpen(!modalOpen)} isOpen={modalOpen}>
+            <Modal toggle={() => setModalOpen(!modalOpen)} isOpen={modalOpen} modalClassName="customPlantModal">
                 <ModalHeader>
                     Add New Custom Plant
                 </ModalHeader>
