@@ -96,13 +96,13 @@
   h5 {
     color: $white;
     margin: 2px 0;
+    cursor: pointer;
   }
   h4 {
     font-weight: 700;
     font-size: 1.3rem;
   }
   h5 {
-    cursor: pointer;
     &:hover {
       opacity: 0.8;
     }

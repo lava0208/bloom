@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import moment from "moment";
 import { Calendar as BigCalendar, momentLocalizer } from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
-import { Modal, ModalHeader, ModalBody } from "reactstrap";
+import { Modal, ModalBody } from "reactstrap";
 
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -114,7 +114,6 @@ const CalendarTab = () => {
     const [schedule, setSchedule] = useState({});
 
     const chooseEvent = (event) => {
-        console.log(event);
         setSchedule(event);
         setModalOpen(true);
     }

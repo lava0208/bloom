@@ -48,10 +48,10 @@ const Sidebar = () => {
           <h3>Plant Settings</h3>
         </div>
         <div className={styles.accountContainer}>
-          <div className={styles.profilePicture}></div>
-          <div className={styles.accountInfoContainer} onClick={() => router.push("/register/account")}>
-            <h4>{name}</h4>
-            <h5>Log Out</h5>
+          <div className={styles.profilePicture} onClick={() => router.push("/profile")}></div>
+          <div className={styles.accountInfoContainer}>
+            <h4 onClick={() => router.push("/profile")}>{name}</h4>
+            <h5 onClick={() => router.push("/register/account")}>Log Out</h5>
           </div>
         </div>
       </div>

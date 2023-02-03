@@ -24,9 +24,11 @@
     font-size: 40px;
     font-weight: bold;
     text-transform: uppercase;
+    margin-bottom: 0;
   }
   h5{
     font-weight: bold;
+    font-size: 0.8rem;
   }
 }
 
@@ -61,7 +63,8 @@
   .proContainerTexts{
     text-align: left;
     h4{
-      margin: 20px 0;    
+      margin: 20px 0;
+      font-size: 1rem;
       span{
         color: $yellow1;
         text-transform: uppercase;
@@ -71,7 +74,7 @@
 }
 
 .freeText{
-  margin: 30px 0 35px;
+  margin: 20px 0;
 }
 
 .proButtonContainer{

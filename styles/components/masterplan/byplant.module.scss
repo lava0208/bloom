@@ -1,152 +1,131 @@
 @import "~sass-variables";
 
 .container {
-  flex: 1;
-  padding: 1rem 1rem 0 1rem;
-  min-height: 0;
-  height: 100%;
-  max-height: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+    padding: 2rem;
 }
 
-.currentPlantContainer {
-  border-radius: 30px;
-  background: $yellow;
-  padding: 1rem;
-  display: flex;
-  gap: 1rem;
-}
+.headerContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 1rem 0;
 
-.plantDetailsContainer,
-.plantOptionsContainer {
-  background: $white;
-  width: 50%;
-  border-radius: 30px;
-  overflow: hidden;
-}
+    h2 {
+        color: $purple;
+        font-weight: 800;
+        font-size: 1.6rem;
+    }
 
-.plantDetailsContainer {
-  padding: 1.5rem;
-  display: flex;
-  gap: 1rem;
-}
-
-.plantImage {
-  background: $blue;
-  border-radius: 30px;
-  flex: 1;
-}
-
-.plantInfoContainer {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-
-  h3,
-  h4,
-  h5 {
-    color: $purple;
-  }
-  h3 {
-    font-weight: 800;
-    font-size: 1.5rem;
-  }
-  h4 {
-    font-size: 0.9rem;
-    font-weight: 700;
-    margin: 6px 0;
-  }
-  h5 {
-    font-size: 0.9rem;
-  }
-}
-
-.plantOptionsContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1rem;
-}
-
-.plantOptionRow {
-  width: 100%;
-  display: flex;
-  margin-bottom: 0.6rem;
-  h3,
-  h4,
-  h5 {
-    font-weight: 700;
-    flex: 1;
-    font-size: 0.9rem;
-  }
-  h3,
-  h4 {
-    flex: 1.2;
-  }
-}
-
-.editButton {
-  background: $blueGrey;
-  border: none;
-  color: $white;
-  font-weight: 700;
-  font-size: 0.7rem;
-  border-radius: 50px;
-  padding: 10px 1.5rem;
-  margin-top: 0.5rem;
-  cursor: pointer;
-  &:hover {
-    opacity: 0.8;
-  }
+    .searchButton {
+        color: $purple;
+        font-weight: 700;
+        font-size: 0.9rem;
+        border: 5px solid $purple;
+        background: transparent;
+        border-radius: 15px;
+        padding: 4px 1rem;
+        width: 250px;
+        text-align: center;
+    }
 }
 
 .plantsContainer {
-  margin-top: 2rem;
-  flex: 1;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 1rem;
-  overflow: auto;
-}
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
 
-.plantContainer {
-  width: calc(50% - 0.5rem);
-  background: $yellow;
-  border-radius: 30px;
-  display: flex;
-  gap: 2rem;
-  padding: 1.5rem;
-  border-radius: 30px;
-}
+    .plantContainer {
+        width: calc(50% - 0.5rem);
+        background: $blue;
+        border-radius: 30px;
+        display: flex;
+        gap: 1.5rem;
+        padding: 1.5rem;
+        border-radius: 30px;
 
-.plantImage {
-  background: $blue;
-  border-radius: 30px;
-  flex: 1;
-  height: 100%;
-}
+        .plantImage {
+            background: $yellow;
+            border-radius: 30px;
+            flex: 1;
+            height: 100%;
+        }
 
-.plantInfoContainer {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin: 1rem 0;
-
-  h3 {
-    font-weight: 700;
-    font-size: 1.3rem;
-  }
-  h4 {
-    font-size: 0.75rem;
-    font-weight: 700;
-    margin: 6px 0;
-  }
-  h5 {
-    font-size: 0.75rem;
-  }
+        .plantInfoContainer {
+            flex: 1 1;
+            padding: 1rem 0;
+            .plantInfoHeaderContainer{
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                padding: 1rem;
+                background-color: $white;
+                border-radius: 20px;
+    
+                h3 {
+                    font-weight: 800;
+                    font-size: 1.3rem;
+                }
+    
+                h4 {
+                    font-size: 0.75rem;
+                    font-weight: 800;
+                    margin: 4px 0;
+                }
+    
+                h5 {
+                    font-size: 0.8rem;
+                    font-weight: 700;
+                }
+    
+                .plantInfoHeader {
+                    display: flex;
+                    align-items: flex-start;
+                    justify-content: space-between;
+    
+                    h3,
+                    h5 {
+                        margin-bottom: 0;
+                    }
+                }
+    
+                .plantOptionsContainer {
+                    display: flex;
+                    margin-top: 1rem;
+    
+                    h5 {
+                        font-size: 0.8rem;
+                        font-weight: 700;
+                        margin-right: 8px;
+                        margin-bottom: 0;
+                        cursor: pointer;
+    
+                        &:hover {
+                            opacity: 0.8;
+                        }
+                    }
+                }
+            }
+            .plantInfoFooterContainer{
+                margin-top: 1rem;
+                button{
+                    color: $white;
+                    font-weight: 700;
+                    font-size: 0.9rem;
+                    border: 5px solid $purple;
+                    background: $purple;
+                    text-align: center;
+                    border-radius: 15px;
+                    width: 100%;
+                    padding: 5px 1.7rem;                    
+                    cursor: pointer;
+                    &:hover {
+                        opacity: 0.8;
+                    }
+                }
+            }
+        }
+    }
 }
