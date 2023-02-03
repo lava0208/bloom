@@ -29,7 +29,7 @@ const CalendarDetail = (props) => {
                 </div>
             </div>
             <div className={styles.buttonsContainer}>
-                <button onClick={props.saveSchedule}>Mark Complete</button>
+                <button onClick={() => props.saveSchedule(props)}>Mark Complete</button>
                 <button onClick={props.cancelSchedule}>Cancel</button>
             </div>
         </div>

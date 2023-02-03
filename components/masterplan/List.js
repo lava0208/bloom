@@ -10,29 +10,19 @@ import styles from "~styles/components/masterplan/list.module.scss";
 import CalendarDetail from "./CalendarDetail";
 
 const List = () => {
-    const event = {
-        id: 1,
-        start: moment().toDate(),
-        end: moment().toDate(),
-        title: "Start Zinnia",
-        description: "King Orange Helium",
-        type: "start",
-        note: {
-            title: "Seed Note",
-            text: "King Orange Helium is a classic Zinnia, with large and easy to handle seeds. Start two seeds per cell, and lightly cover with vermiculite before moistening. Zinnias are large seedlings and should sprout up in just a few days."
-        },
-        detail:{
-            title: "Start 450 seeds",
-            text: "Light is NOT required for germination.",
-            day: 14
-        }
-    }
+    const [event, setEvent] = useState({});
     const [modalOpen, setModalOpen] = useState(false);
-    const saveSchedule = () => {
+    const [activeEvent, setActiveEvent] = useState(-1);
+    const saveSchedule = (e) => {
         setModalOpen(false);
+        setActiveEvent(e.schedule.id)
     }
     const cancelSchedule = () => {
         setModalOpen(false);
+    }
+    const openSchedule = (event) => {
+        setModalOpen(true)
+        setEvent(event)
     }
 
     return (
@@ -43,7 +33,7 @@ const List = () => {
                 </h2>
                 <div className={styles.tasksScrollContainer}>
                     {list.overdue.map((task, i) => (
-                        <div className={styles.taskContainer} key={i} onClick={() => setModalOpen(true)}>
+                        <div className={styles.taskContainer} key={i}>
                             <div className={styles.taskInfo}>
                                 <h2>{task.name}</h2>
                                 <h3 className={styles.overdue}>
@@ -59,12 +49,18 @@ const List = () => {
                 <h2 className={`${styles.tasksContainerTitle} `}>Today</h2>
                 <div className={styles.tasksScrollContainer}>
                     {list.today.map((task, i) => (
-                        <div className={styles.taskContainer} key={i} onClick={() => setModalOpen(true)}>
+                        <div className={styles.taskContainer} key={i} onClick={() => openSchedule(task)}>
                             <div className={styles.taskInfo}>
-                                <h2>{task.name}</h2>
+                                <h2>{task.title}</h2>
                                 <h3>Today</h3>
                             </div>
-                            <div className={`${styles.taskCap} ${styles.today}`}></div>
+                            <div className={`${styles.taskCap} ${styles.today}`}>
+                                {
+                                    activeEvent === i + 1 && (
+                                        <div className={styles.check}>&#10004;</div>
+                                    )
+                                }                                
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -73,7 +69,7 @@ const List = () => {
                 <h2 className={`${styles.tasksContainerTitle} `}>Tomorrow</h2>
                 <div className={styles.tasksScrollContainer}>
                     {list.tomorrow.map((task, i) => (
-                        <div className={styles.taskContainer} key={i} onClick={() => setModalOpen(true)}>
+                        <div className={styles.taskContainer} key={i}>
                             <div className={styles.taskInfo}>
                                 <h2>{task.name}</h2>
                                 <h3>Tomorrow</h3>
@@ -87,7 +83,7 @@ const List = () => {
                 <h2>This Week</h2>
                 <div className={styles.thisWeekScrollContainer}>
                     {list.thisWeek.map((task, i) => (
-                        <div className={styles.thisWeekTaskContainer} key={i} onClick={() => setModalOpen(true)}>
+                        <div className={styles.thisWeekTaskContainer} key={i}>
                             <h3>{task.name}</h3>
                             <h4>{moment(task.date).format("dddd t\\h\\e Do")}</h4>
                         </div>

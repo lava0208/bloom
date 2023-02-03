@@ -8,6 +8,19 @@ const CurrentPlan = (props) => {
     const [pinchCheckbox, setPinchCheckbox] = useState(false);
     const [potCheckbox, setPotCheckbox] = useState(false);
 
+    const seeds = [
+        { label: "Direct Sow", value: 1 },
+        { label: "Direct Indoors", value: 2 }
+    ]
+    const [activeSeed, setActiveSeed] = useState(-1);
+
+    const harvests = [
+        { label: "Early", value: 1 },
+        { label: "Regular", value: 2 },
+        { label: "Lave", value: 3 }
+    ]
+    const [activeHarvest, setActiveHarvest] = useState(-1);
+
     return (
         <div className={styles.container}>
             <div className="modal-header">
@@ -25,18 +38,19 @@ const CurrentPlan = (props) => {
                 <div className={styles.planOptionsContainer}>
                     <div className={styles.seedingRow}>
                         <h4>Seeding</h4>
-                        <button>Direct Sow</button>
-                        <button>Direct Indoors</button>
+                        {seeds.map((element, i) => (
+                            <button key={i} onClick={() => setActiveSeed(element.value)} className={activeSeed === i + 1 ?  styles.selected : ''}>{element.label}</button>
+                        ))}
                     </div>
                     <div className={styles.quantityRow}>
                         <h4>Quantity</h4>
-                        <button># of seeds</button>
+                        <input placeholder="# of seeds" />
                     </div>
                     <div className={styles.harvestRow}>
                         <h4>Harvest</h4>
-                        <button>Early</button>
-                        <button>Regular</button>
-                        <button>Late</button>
+                        {harvests.map((element, i) => (
+                            <button key={i} onClick={() => setActiveHarvest(element.value)} className={activeHarvest === i + 1 ?  styles.selected : ''}>{element.label}</button>
+                        ))}
                     </div>
                     <div className={styles.successionContainer}>
                         <div className={styles.successionContainer1}>
@@ -45,8 +59,8 @@ const CurrentPlan = (props) => {
                                 <h5>You can always adjust spacing later.</h5>
                             </div>
                             <div className={styles.successionButtonsContainer}>
-                                <button><span>6</span> Plantings</button>
-                                <button><span>14</span> Days Between</button>
+                                <div><input placeholder="6" /> <span>Plantings</span></div>
+                                <div><input placeholder="14" /> <span>Days Between</span></div>
                             </div>
                         </div>
                         <div className={styles.successionCheckboxesContainer}>
