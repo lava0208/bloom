@@ -85,7 +85,10 @@ const ByPlantDetail = (props) => {
                         <div className={styles.plantOptionsHeader}>
                             <div className={styles.plantOptionName}>
                                 <h3>{option.name}</h3>
-                                <h5><span>{option.day}</span> days</h5>
+                                <div>
+                                    <input placeholder="" />
+                                    <span>{option.day}</span> days
+                                </div>
                             </div>
                             <button>{moment(option.date).format("MMMM Do, YYYY")}</button>
                         </div>

@@ -132,17 +132,6 @@
                 font-size: 1rem;
                 font-weight: 800;
             }
-            h5{
-                font-size: 0.75rem;
-                font-weight: 700;
-                span{
-                    border: 2px solid $blue;
-                    border-radius: 20px 0 0 20px;
-                    padding: 2px 0.5rem 0;
-                    font-size: 0.6rem;
-                    font-weight: 900;
-                }
-            }
             button{
                 color: $white;
                 font-weight: 700;
@@ -153,6 +142,36 @@
                 padding: 0.5rem;
                 width: 140px;
                 cursor: pointer;
+            }
+        }
+        .plantOptionName{
+            font-size: 0.75rem;
+            font-weight: 700;
+            div{
+                display: flex;
+                align-items: center;
+                white-space: nowrap;
+                input{
+                    border: 2px solid $blue;
+                    background: transparent;
+                    border-radius: 50px 0 0 50px;
+                    color: $blue;
+                    font-weight: 700;
+                    font-size: 0.7rem;
+                    padding: 2px 5px;
+                    text-align: center;
+                    margin-right: 0;
+                    width: 40px;
+                    line-height: 1;
+                    &:focus{
+                        outline: none;
+                    }
+                }
+                span{
+                    color: $white;
+                    font-size: 0.7rem;
+                    font-weight: 700;
+                }
             }
         }
         .plantOptionsFooter{
