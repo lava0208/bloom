@@ -25,7 +25,7 @@ const YourPlan = () => {
     const openPlanSettingsModal = () => {
         setPlanSettingsModalOpen(true);
     }
-    const saveSetting = () => {
+    const closePlanSettingsModal = () => {
         setPlanSettingsModalOpen(false)
     }
     const cancelSetting = () => {
@@ -74,7 +74,7 @@ const YourPlan = () => {
             </Modal>
             <Modal toggle={() => setPlanSettingsModalOpen(!planSettingsModalOpen)} isOpen={planSettingsModalOpen} centered>
                 <ModalBody>
-                    <UserSettings saveSetting={saveSetting} cancelSetting={cancelSetting} />
+                    <UserSettings closePlanSettingsModal={closePlanSettingsModal} cancelSetting={cancelSetting} />
                 </ModalBody>
             </Modal>
         </>

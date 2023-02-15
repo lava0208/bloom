@@ -51,7 +51,7 @@ const Sidebar = () => {
           <div className={styles.profilePicture} onClick={() => router.push("/profile")}></div>
           <div className={styles.accountInfoContainer}>
             <h4 onClick={() => router.push("/profile")}>{name}</h4>
-            <h5 onClick={() => router.push("/register/account")}>Log Out</h5>
+            <h5 onClick={() => router.push("/account/login")}>Log Out</h5>
           </div>
         </div>
       </div>

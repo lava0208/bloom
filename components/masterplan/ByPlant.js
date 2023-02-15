@@ -17,14 +17,27 @@ const ByPlant = () => {
         setModalOpen(false);
     }
     const [activePlant, setActivePlant] = useState({});
+
+    const [query, setQuery] = useState('');
+    const search = (e) => {
+        setQuery(e.target.value)
+    }
+    const searchFilter = (array) => {
+        return array.filter(
+            (el) => Object.keys(el).some((parameter) => 
+                el[parameter].toString().toLowerCase().includes(query)
+            )
+        )
+    }
+    const filtered = searchFilter(byPlant.plants)
     return (
         <div className={styles.container}>
             <div className={styles.headerContainer}>
                 <h2>2023 Plan Plantings</h2>
-                <input className={styles.searchButton} placeholder={'Search'} />
+                <input className={styles.searchButton} placeholder={'Search'} onChange={search} />
             </div>
             <div className={styles.plantsContainer}>
-                {byPlant.plants.map((plant, i) => (
+                {filtered.map((plant, i) => (
                     <div className={styles.plantContainer} key={i}>
                         <div className={styles.plantImage}></div>
                         <div className={styles.plantInfoContainer}>

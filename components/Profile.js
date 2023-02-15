@@ -76,7 +76,7 @@ const Profile = () => {
                         <button className={styles.button1}>Save Changes</button>
                     </div>
                 </div>
-                <button className={styles.button2} onClick={() => router.push("/register/account")}>Close Account</button>
+                <button className={styles.button2} onClick={() => router.push("/account/login")}>Close Account</button>
             </div>
             <div className={styles.profileContainer}>
                 {

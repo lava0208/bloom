@@ -35,16 +35,29 @@ const Plants = () => {
     const openCreateModal = () => {
         setModalOpen(true);
     }
+
+    const [query, setQuery] = useState('');
+    const search = (e) => {
+        setQuery(e.target.value)
+    }
+    const searchFilter = (array) => {
+        return array.filter(
+            (el) => Object.keys(el).some((parameter) => 
+                el[parameter].toString().toLowerCase().includes(query)
+            )
+        )
+    }
+    const filtered = searchFilter(settingsPlants)
     return (
         <>
             <div className={styles.headerContainer}>
                 <div className={styles.addCustomContainer} onClick={() => openCreateModal()}>
                     <button>Add New Custom</button>
                 </div>
-                <input className={styles.searchButton} placeholder={'Search'} />
+                <input className={styles.searchButton} placeholder={'Search'} onChange={search} />
             </div>
             <div className={styles.plantsContainer}>
-                {settingsPlants.map((plant, i) => (
+                {filtered.map((plant, i) => (
                     <div className={styles.plantContainer} key={i} onMouseEnter={() => setIsShowActionText(i)} onMouseLeave={() => setIsShowActionText(-1)}>
                         <div className={styles.plantImage}></div>
                         <div className={styles.plantInfoContainer}>

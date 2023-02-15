@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import React, { useState } from "react";
 import moment from "moment";
 import { Modal, ModalBody } from "reactstrap";
@@ -57,7 +58,7 @@ const List = () => {
                             <div className={`${styles.taskCap} ${styles.today}`}>
                                 {
                                     activeEvent === i + 1 && (
-                                        <div className={styles.check}>&#10004;</div>
+                                        <img src="/assets/checkbox.png" alt="checkbox" />
                                     )
                                 }                                
                             </div>
