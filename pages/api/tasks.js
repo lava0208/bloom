@@ -30,9 +30,21 @@ export default async function handler(req, res) {
                         $lt: moment().add(1, 'days').format('YYYY/MM/DD')
                     }
                 }).toArray();
+                data.nextweek = await db.collection("tasks").find({
+                    scheduled_at: {
+                        $gt: moment().format('YYYY/MM/DD'),
+                        $lt: moment().add(7, 'days').format('YYYY/MM/DD')
+                    }
+                }).toArray();
                 data.overdue = await db.collection("tasks").find({
                     scheduled_at: {
                         $gt: moment().add(-1000, 'days').format('YYYY/MM/DD'),
+                        $lt: moment().add(1, 'days').format('YYYY/MM/DD')
+                    }
+                }).toArray();
+                data.season = await db.collection("tasks").find({
+                    scheduled_at: {
+                        $gt: moment().add(-90, 'days').format('YYYY/MM/DD'),
                         $lt: moment().add(1, 'days').format('YYYY/MM/DD')
                     }
                 }).toArray();
