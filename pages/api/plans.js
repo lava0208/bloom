@@ -9,7 +9,7 @@ export default async function handler(req, res) {
         //... create a plan
         case "POST":
             await db.collection("plans").insertOne(req.body);
-            return res.json({ status: true, data: 'A plan is created successfully.' });
+            return res.json({ status: true, message: 'A plan is created successfully.' });
         //... get all plans or plan by user id
         case "GET":
             const id = req.query.id;

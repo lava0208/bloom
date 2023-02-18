@@ -1,25 +1,94 @@
-import React, { useState } from "react";
-
-import { currentPlan } from "~lib/dummy";
+import React, { useEffect, useState } from "react";
+import { userService, planService, plantService, plantingService } from "services";
 
 import styles from "~styles/components/modifyplan/currentplan.module.scss";
 
 const CurrentPlan = (props) => {
+    //... Initialize
     const [pinchCheckbox, setPinchCheckbox] = useState(false);
     const [potCheckbox, setPotCheckbox] = useState(false);
-
     const seeds = [
         { label: "Direct Sow", value: 1 },
         { label: "Direct Indoors", value: 2 }
     ]
     const [activeSeed, setActiveSeed] = useState(-1);
-
     const harvests = [
         { label: "Early", value: 1 },
         { label: "Regular", value: 2 },
-        { label: "Lave", value: 3 }
+        { label: "Late", value: 3 }
     ]
     const [activeHarvest, setActiveHarvest] = useState(-1);
+
+    const [planting, setPlanting] = useState({
+        plan_id: "",
+        plant_id: props.plantId,
+        seeds: "",
+        harvest: "",
+        direct_sow: false,
+        pinch: false,
+        pot_on: false,
+        succession: "",
+        spacing: ""
+    })
+
+    useEffect(() => {
+        if(props.planting){
+            //... edit page
+            getPlanting();
+            setPinchCheckbox(props.planting.pinch);
+            setPotCheckbox(props.planting.pot_on);
+            setActiveSeed(props.planting.direct_sow ? 1 : 2);
+            var _harvest = harvests.find(x => x.label === props.planting.harvest)
+            setActiveHarvest(_harvest ? _harvest.value : -1);
+        }else{
+            //... create page
+            getPlantAndPlanting();
+        }
+    }, [props.planting])
+
+    //... get plan nand planting
+    const [plant, setPlant] = useState({});
+    const getPlantAndPlanting = async () => {
+        var _plan = await planService.getByUserId(userService.getId());
+        var _plant = await plantService.getById(props.plantId);
+        
+        var _planting = { ...planting };
+        _planting.plan_id = _plan.data._id;
+        _planting.name = _plant.data.name;
+        _planting.species = _plant.data.species;
+        setPlant(_plant.data);
+        setPlanting(_planting);
+    }
+
+    const getPlanting = async () => {
+        var _plant = await plantService.getById(props.plantId);
+        setPlant(_plant.data);
+        setPlanting(props.planting)
+    }
+
+    const save = async () => {
+        if(props.planting !== undefined){
+            const _result = await plantingService.update(props.planting._id , planting);
+            alert(_result.message);
+        }else{
+            const _result = await plantingService.create(planting);
+            alert(_result.message);
+        }
+        props.savePlanting();
+    }
+
+    const reset = () => {
+        setPlanting(planting => ({
+            ...planting,
+            seeds: null,
+            succession: "",
+            spacing: ""
+        }))
+        setActiveSeed(-1);
+        setActiveHarvest(-1);
+        setPinchCheckbox(false);
+        setPotCheckbox(false);
+    }
 
     return (
         <div className={styles.container}>
@@ -30,54 +99,70 @@ const CurrentPlan = (props) => {
                 <div className={styles.planDetailsContainer}>
                     <div className={styles.planImage}></div>
                     <div className={styles.planInfoContainer}>
-                        <h3>{currentPlan.name}</h3>
-                        <h4>{currentPlan.variety}</h4>
-                        <h5>{currentPlan.description}</h5>
+                        <h3>{plant.name}</h3>
+                        <h4>{plant.species}</h4>
+                        <h5>{plant.description}</h5>
                     </div>
                 </div>
                 <div className={styles.planOptionsContainer}>
                     <div className={styles.seedingRow}>
                         <h4>Seeding</h4>
                         {seeds.map((element, i) => (
-                            <button key={i} onClick={() => setActiveSeed(element.value)} className={activeSeed === i + 1 ?  styles.selected : ''}>{element.label}</button>
+                            <button key={i} 
+                                onClick={() => {setActiveSeed(element.value), setPlanting({...planting, direct_sow: element.value === 1 ? true : false})}} 
+                                className={activeSeed === i + 1 ?  styles.selected : ''}
+                                value={planting.direct_sow}
+                            >
+                                {element.label}
+                            </button>
                         ))}
                     </div>
                     <div className={styles.quantityRow}>
                         <h4>Quantity</h4>
-                        <input placeholder="# of seeds" />
+                        <input type="number" placeholder="# of seeds" value={planting.seeds === null ? "" : planting.seeds} onChange={(e) => setPlanting({...planting, seeds: e.target.value })} />
                     </div>
                     <div className={styles.harvestRow}>
                         <h4>Harvest</h4>
                         {harvests.map((element, i) => (
-                            <button key={i} onClick={() => setActiveHarvest(element.value)} className={activeHarvest === i + 1 ?  styles.selected : ''}>{element.label}</button>
+                            <button key={i} 
+                                onClick={() => {setActiveHarvest(element.value), setPlanting({...planting, harvest: element.value === 1 ? "Early" : element.value === 2 ? "Regular" : "Late"})}} 
+                                className={activeHarvest === i + 1 ?  styles.selected : ''}
+                                value={planting.harvest}
+                            >
+                                {element.label}
+                            </button>
                         ))}
                     </div>
                     <div className={styles.successionContainer}>
                         <div className={styles.successionContainer1}>
                             <div className={styles.successionTextContainer}>
-                                <h4>Sucessions</h4>
+                                <h4>Successions</h4>
                                 <h5>You can always adjust spacing later.</h5>
                             </div>
                             <div className={styles.successionButtonsContainer}>
-                                <div><input placeholder="6" /> <span>Plantings</span></div>
-                                <div><input placeholder="14" /> <span>Days Between</span></div>
+                                <div>
+                                    <input value={planting.succession} onChange={(e) => setPlanting({...planting, succession: e.target.value})} /> 
+                                    <span>Plantings</span>
+                                </div>
+                                <div>
+                                    <input value={planting.spacing} onChange={(e) => setPlanting({...planting, spacing: e.target.value})} />
+                                    <span>Days Between</span>
+                                </div>
                             </div>
                         </div>
                         <div className={styles.successionCheckboxesContainer}>
                             <div className={styles.successionCheckboxRow}>
                                 <h6>Pinch</h6>
                                 <div
-                                    onClick={() => setPinchCheckbox(!pinchCheckbox)}
-                                    className={`${styles.checkbox} ${pinchCheckbox ? styles.active : null
-                                        }`}
+                                    onClick={() => {setPinchCheckbox(!pinchCheckbox), setPlanting({...planting, pinch: !pinchCheckbox})}}
+                                    className={`${styles.checkbox} ${pinchCheckbox ? styles.active : null}`}
                                 ></div>
                             </div>
                             <div className={styles.successionCheckboxRow}>
                                 <h6>Pot On</h6>
                                 <div
-                                    onClick={() => setPotCheckbox(!potCheckbox)}
-                                    className={`${styles.checkbox} ${potCheckbox ? styles.active : null
-                                        }`}
+                                    onClick={() => {setPotCheckbox(!potCheckbox), setPlanting({...planting, pot_on: !potCheckbox})}}
+                                    className={`${styles.checkbox} ${potCheckbox ? styles.active : null}`}
                                 ></div>
                             </div>
                         </div>
@@ -85,8 +170,8 @@ const CurrentPlan = (props) => {
                 </div>
             </div>
             <div className={styles.buttonsContainer}>
-                <button onClick={props.savePlan}>Save Changes</button>
-                <button onClick={props.resetPlan}>Reset</button>
+                <button onClick={() => save()}>Save Changes</button>
+                <button onClick={() => reset()}>Reset</button>
             </div>
         </div>
     );

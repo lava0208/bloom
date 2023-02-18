@@ -1,19 +1,22 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useState } from "react";
 import { useRouter } from "next/router";
+import { userService } from "services";
 
 import styles from "~styles/pages/account/register.module.scss";
 
 const Login = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [user, setUser] = useState({
+        email: "",
+        password: ""
+    });
     const [error, setError] = useState(false);
     const [errorText, setErrorText] = useState("");
 
     const router = useRouter();
     const emailValidation = () => {
         const regex = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-        if (regex.test(email) === false) {
+        if (regex.test(user.email) === false) {
             setError(true);
             setErrorText("Email is not valid");
             return false;
@@ -22,25 +25,15 @@ const Login = () => {
     }
 
     const login = async () => {
-        if (email !== "" && password !== "") {
+        if (user.email !== "" && user.password !== "") {
             if (emailValidation()) {
-                const response = await fetch("/api/auth/user", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        email: email,
-                        password: password
-                    }),
-                })
-                const user = await response.json();
-                if(user.status === true){
-                    window.userid = user.data[0]._id;
+                const result = await userService.login(user);
+                if(result.status === true){
+                    await userService.setId(result.data[0]._id);
                     router.push("/")
                 }else{
                     setError(true);
-                    setErrorText(user.message)
+                    setErrorText(result.message)
                 }
             }
         } else {
@@ -61,8 +54,13 @@ const Login = () => {
                             type="text"
                             className={styles.input}
                             placeholder="Email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            value={user.email}
+                            onChange={(e) => {
+                                setUser({
+                                    ...user,
+                                    email: e.target.value,
+                                });
+                            }}
                         />
                     </div>
                 </div>
@@ -71,8 +69,13 @@ const Login = () => {
                     type="password"
                     className={styles.input}
                     placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    value={user.password}
+                    onChange={(e) => {
+                        setUser({
+                            ...user,
+                            password: e.target.value,
+                        });
+                    }}
                 />
                 {
                     error && (

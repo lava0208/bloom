@@ -8,26 +8,30 @@ export default async function handler(req, res) {
     switch (req.method) {
         //... create plantings
         case "POST":
-            await db.collection("plantings").insertOne(req.body);
-            return res.json({ status: true, data: 'Planting is created successfully.' });
+            //... check if there is same plan id and plant id
+            let existOne = await db.collection("plantings").find({plan_id: req.body.plan_id, plant_id: req.body.plant_id}).toArray();
+            if(existOne.length === 0){
+                await db.collection("plantings").insertOne(req.body);
+                return res.json({ status: true, message: 'Planting is created successfully.' });
+            }else{
+                return res.json({ status: false, message: 'The Planting was already planed.' });
+            }
 
         //... get all plantings or planing by id
         case "GET":
-            const { plantingid } = req.query;
-            if(plantingid === undefined){
+            if(req.query.id === undefined){
                 let plantings = await db.collection("plantings").find({}).toArray();
                 return res.json({ status: true, data: plantings });
             }else{
-                let plan = await db.collection("plantings").findOne({_id: new ObjectId(plantingid)});
+                let plan = await db.collection("plantings").findOne({_id: new ObjectId(req.query.id)});
                 return res.json({ status: true, data: plan });
             }
 
         //... update a planting
         case "PUT":
-            const { id } = req.query;
             await db.collection("plantings").updateOne(
                 {
-                    _id: new ObjectId(id),
+                    _id: new ObjectId(req.query.id),
                 },
                 {
                     $set: {
@@ -35,7 +39,9 @@ export default async function handler(req, res) {
                         harvest: req.body.harvest,
                         direct_sow: req.body.direct_sow,
                         pinch: req.body.pinch,
-                        pot_on: req.body.pot_on
+                        pot_on: req.body.pot_on,
+                        spacing: req.body.spacing,
+                        succession: req.body.succession
                     },
                 }
             );
@@ -43,7 +49,7 @@ export default async function handler(req, res) {
 
         //... delete a planting
         case "DELETE":
-            await db.collection("plantings").deleteOne({_id: new ObjectId(req.query)});
+            await db.collection("plantings").deleteOne({_id: new ObjectId(req.query.id)});
             return res.json({ status: true, message: 'The planting is deleted successfully.' });
     }
 }

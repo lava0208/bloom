@@ -1,12 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useState } from "react";
 import { useRouter } from "next/router";
+import { userService, planService } from "services";
 
 import styles from "~styles/pages/account/register.module.scss";
 
 const Plan = () => {
     const [plan, setPlan] = useState({
-        userid: window.userid,
+        userid: "",
         name: "",
         location: "",
         size: "",
@@ -19,15 +20,10 @@ const Plan = () => {
 
     const register = async () => {
         if (plan.name !== "" && plan.location !== "" && plan.size !== "") {
-            const response = await fetch("/api/plans", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(plan),
-            })
-            const result = await response.json();
+            plan.userid = userService.getId();
+            const result = await planService.create(plan)
             if(result.status === true){
+                alert(result.message);
                 router.push("/account/payment")
             }else{
                 setError(true);

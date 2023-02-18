@@ -1,5 +1,6 @@
 import clientPromise from "../../lib/mongodb";
 import { ObjectId } from "mongodb";
+import moment from "moment";
 
 export default async function handler(req, res) {
     const client = await clientPromise;
@@ -8,38 +9,43 @@ export default async function handler(req, res) {
     switch (req.method) {
         //... create a task
         case "POST":
-            await db.collection("tasks").insertOne(req.body);
-            return res.json({ status: true, data: 'A task is created successfully.' });
+            await db.collection("tasks").insertMany(req.body);
+            return res.json({ status: true, message: 'A task is created successfully.' });
 
         //... get all tasks or task by id
         case "GET":
-            const { taskid } = req.query;
-            if(taskid === undefined){
+            if(req.query.id){
+                let task = await db.collection("tasks").findOne({_id: new ObjectId(req.query.id)});
+                return res.json({ status: true, data: task });
+            }else if(req.query.plantingid){
+                let tasks = await db.collection("tasks").find({planting_id: req.query.plantingid}).toArray();
+                return res.json({ status: true, data: tasks });
+            }else if(req.query.date){
+                let data = {};
+                data.today = await db.collection("tasks").find({scheduled_at: moment().format('YYYY/MM/DD')}).toArray();
+                data.tomorrow = await db.collection("tasks").find({scheduled_at: moment().add(1, 'days').format('YYYY/MM/DD')}).toArray();
+                data.week = await db.collection("tasks").find({
+                    scheduled_at: {
+                        $gt: moment().add(-7, 'days').format('YYYY/MM/DD'),
+                        $lt: moment().add(1, 'days').format('YYYY/MM/DD')
+                    }
+                }).toArray();
+                data.overdue = await db.collection("tasks").find({
+                    scheduled_at: {
+                        $gt: moment().add(-1000, 'days').format('YYYY/MM/DD'),
+                        $lt: moment().add(1, 'days').format('YYYY/MM/DD')
+                    }
+                }).toArray();
+                return res.json({ status: true, data: data });
+            }else{
                 let tasks = await db.collection("tasks").find({}).toArray();
                 return res.json({ status: true, data: tasks });
-            }else{
-                let task = await db.collection("tasks").findOne({_id: new ObjectId(taskid)});
-                return res.json({ status: true, data: task });
             }
 
         //... update a task
         case "PUT":
-            const { id } = req.query;
-            await db.collection("tasks").updateOne(
-                {
-                    _id: new ObjectId(id),
-                },
-                {
-                    $set: {
-                        planting_id: req.body.planting_id,
-                        type: req.body.type,
-                        length: req.body.length,
-                        scheduled_at: req.body.scheduled_at,
-                        rescheduled_at: req.body.rescheduled_at,
-                        completed_at: req.body.completed_at
-                    },
-                }
-            );
+            await db.collection("tasks").deleteMany({planting_id: req.query.plantingid});
+            await db.collection("tasks").insertMany(req.body);
             return res.json({ status: true, message: 'task is updated successfully.' });
 
         //... delete a task

@@ -1,6 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import { userService } from "services";
+import bcrypt from "bcryptjs";
 
 import styles from "~styles/pages/profile.module.scss";
 
@@ -9,14 +11,56 @@ const Profile = () => {
     const [user, setUser] = useState({
         name: "",
         email: "",
-        password: ""
+        password: "",
+        email_newsletter: false,
+        share_custom_varieties: false
     });
-    const [preference, setPreference] = useState({
-        emailNewsletter: false,
-        shareCustomVarieties: false
-    })
     const [isPro, setIsPro] = useState(false);
-    return (
+
+    const [originPassword, setOriginPassword] = useState("");
+    const [errMsg, setErrMsg] = useState("");
+
+    useEffect(() => {
+        getUser();
+    }, [])
+
+    const getUser = async () => {
+        const user = await userService.getById(userService.getId());
+        if(user.data !== null){
+            setOriginPassword(user.data.password);
+            setUser(user.data);
+        }
+    }
+    
+    const saveUser = () => {
+        bcrypt.compare(user.password, originPassword, async function (err, isMatch) {
+            if (err, user.password === "") {
+                setErrMsg("Fill all fields");
+            } else if (!isMatch) {
+                setErrMsg("Use correct password.");
+            } else {
+                setErrMsg(" ");
+                const result = await userService.update(userService.getId(), user);
+                if(result.status === true){
+                    alert(result.message)
+                }else{
+                    setErrorText(result.message)
+                }
+            }
+        });
+    }
+
+    const deleteUser = async () => {
+        if (confirm('Are you sure you want to close this account?')) {
+            await userService.delete(userService.getId());
+            localStorage.removeItem("user");
+            localStorage.removeItem("userid");
+            router.push("/account/register");
+        }
+    }
+
+    return (<>
+        <h2 className={styles.subHeader}>Hello, {user.name}</h2>
         <div className={styles.profilesContainer}>
             <div className={styles.profileContainer}>
                 <div className={styles.profileImage}></div>
@@ -39,14 +83,19 @@ const Profile = () => {
                         }
                     />
                     <input
-                        type="text"
+                        type="password"
                         placeholder="Password"
                         value={user.password}
                         onChange={(e) =>
                             setUser({ ...user, password: e.target.value })
                         }
                     />
-                    <button className={styles.button1}>Save Changes</button>
+                    { 
+                        errMsg && (
+                            <p className={styles.errorText}>{errMsg}</p>
+                        )
+                    }
+                    <button className={styles.button1} onClick={() => saveUser()}>Save Changes</button>
                 </div>
                 <div className={styles.preferenceContainer}>
                     <h3>Preferences</h3>
@@ -55,9 +104,9 @@ const Profile = () => {
                             <input
                                 type="checkbox"
                                 id="emailNewsletter"
-                                value={preference.emailNewsletter}
+                                checked={user.email_newsletter}
                                 onChange={(e) =>
-                                    setPreference({ ...preference, emailNewsletter: e.target.value })
+                                    setUser({ ...user, email_newsletter: e.target.checked })
                                 }
                             />
                             <label htmlFor="emailNewsletter">Email Newsletter</label>                        
@@ -66,17 +115,17 @@ const Profile = () => {
                             <input
                                 type="checkbox"
                                 id="shareCustomVarieties"
-                                value={preference.shareCustomVarieties}
+                                checked={user.share_custom_varieties}
                                 onChange={(e) =>
-                                    setPreference({ ...preference, shareCustomVarieties: e.target.value })
+                                    setUser({ ...user, share_custom_varieties: e.target.checked })
                                 }
                             />
                             <label htmlFor="shareCustomVarieties">Share Custom Varieties</label>                        
                         </div>
-                        <button className={styles.button1}>Save Changes</button>
+                        <button className={styles.button1} onClick={() => saveUser()}>Save Changes</button>
                     </div>
                 </div>
-                <button className={styles.button2} onClick={() => router.push("/account/login")}>Close Account</button>
+                <button className={styles.button2} onClick={() => deleteUser()}>Close Account</button>
             </div>
             <div className={styles.profileContainer}>
                 {
@@ -108,6 +157,7 @@ const Profile = () => {
                 <button className={styles.button2} onClick={() => setIsPro(false)}>Cancel PRO</button>
             </div>
         </div>
+        </>
     );
 };
 

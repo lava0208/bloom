@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, ModalBody } from "reactstrap";
 
-import { yourPlan } from "~lib/dummy";
+import { plantingService } from "services";
 import CurrentPlan from "./CurrentPlan";
 import UserSettings from "~components/plantsettings/UserSettings";
 
@@ -9,16 +9,38 @@ import 'bootstrap/dist/css/bootstrap.css';
 import styles from "~styles/components/modifyplan/yourplan.module.scss";
 
 const YourPlan = () => {
+    //... get all plantings
+    const [plantings, setPlantings] = useState([]);
     const [planEditModalOpen, setPlanEditModalOpen] = useState(false);
     const [isShowActionText, setIsShowActionText] = useState(-1);
-    const openPlanEditModal = () => {
+
+    //... get a planting
+    const [plantId, setPlantId] = useState("");
+    const [planting, setPlanting] = useState({});
+    const openPlanEditModal = async (id, plant_id) => {
         setPlanEditModalOpen(true);
+        setPlantId(plant_id);
+        var _result = await plantingService.getById(id);
+        setPlanting(_result.data);
     }
-    const savePlan = () => {
+    const savePlanting = () => {
+        getAllPlantings();
         setPlanEditModalOpen(false);
     }
-    const resetPlan = () => {
-        setPlanEditModalOpen(false);
+    const deletePlanting = async (id) => {
+        if (confirm('Are you sure you want to delete this plan?')) {
+            await plantingService.delete(id);
+            getAllPlantings();
+        }
+    }
+
+    useEffect(() => {
+        getAllPlantings();
+    }, [])
+
+    const getAllPlantings = async () => {
+        var _result = await plantingService.getAll();        
+        setPlantings(_result.data);
     }
 
     const [planSettingsModalOpen, setPlanSettingsModalOpen] = useState(false);
@@ -37,25 +59,25 @@ const YourPlan = () => {
                 <h2>Your Plan</h2>
 
                 <div className={styles.scrollContainer}>
-                    {yourPlan.map((plan, i) => (
+                    {plantings.map((planting, i) => (
                         <div className={styles.planContainer} key={i} onMouseEnter={() => setIsShowActionText(i)} onMouseLeave={() => setIsShowActionText(-1)}>
                             <div className={styles.planHeader}>
-                                <h3>{plan.name}</h3>
-                                <h3>{plan.count}ct</h3>
+                                <h3>{planting.name}</h3>
+                                <h3>{planting.seeds}ct</h3>
                             </div>
-                            <h4 className={styles.planSpecies}>{plan.species}</h4>
+                            <h4 className={styles.planSpecies}>{planting.species}</h4>
                             <div className={styles.planOptionsContainer}>
-                                <h5>Start</h5>
-                                <h5>Regular</h5>
-                                <h5>Pinch</h5>
-                                <h5>Pot On</h5>
+                                <h5>{planting.direct_sow ? "Start" : "Direct"}</h5>
+                                <h5>{planting.harvest}</h5>
+                                <h5>{planting.pinch ? "Pinch" : ""}</h5>
+                                <h5>{planting.pot_on ? "Pot On" : ""}</h5>
                             </div>
-                            {plan.notes && <h6 className={styles.planNotes}>{plan.notes}</h6>}
+                            {/* {plan.notes && <h6 className={styles.planNotes}>{plan.notes}</h6>} */}
                             {
                                 i === isShowActionText && (
                                     <div className={styles.plantHoverText}>
-                                        <button>Delete</button>
-                                        <button onClick={() => openPlanEditModal()}>Edit</button>
+                                        <button onClick={() => deletePlanting(planting._id)}>Delete</button>
+                                        <button onClick={() => openPlanEditModal(planting._id, planting.plant_id)}>Edit</button>
                                     </div>
                                 )
                             }
@@ -69,7 +91,7 @@ const YourPlan = () => {
             </div>
             <Modal toggle={() => setPlanEditModalOpen(!planEditModalOpen)} isOpen={planEditModalOpen} centered modalClassName="modifyPlanModal">
                 <ModalBody>
-                    <CurrentPlan title="Edit Crimson Glory" savePlan={savePlan} resetPlan={resetPlan} />
+                    <CurrentPlan title="Edit Crimson Glory" plantId={plantId} planting={planting} savePlanting={savePlanting} />
                 </ModalBody>
             </Modal>
             <Modal toggle={() => setPlanSettingsModalOpen(!planSettingsModalOpen)} isOpen={planSettingsModalOpen} centered>

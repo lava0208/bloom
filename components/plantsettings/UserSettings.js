@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { userService, planService } from "services";
 
 import styles from "~styles/components/plantsettings/userSettings.module.scss";
 
@@ -15,33 +16,26 @@ const UserSettings = (props) => {
     }, [])
 
     const getUserPlan = async () => {
-        const response = await fetch("/api/plans?userid=" + window.userid, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-        const result = await response.json();
+        const result = await planService.getByUserId(userService.getId());
         if(result.data !== null){
             setUserSettings(result.data);
         }
     }
 
     const saveSetting = async () => {
-        await fetch("/api/plans?userid=" + window.userid, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(userSettings),
-        })
+        if (confirm('Do you want to update your plan?')) {
+            const result = await planService.update(userService.getId(), userSettings);
+            if(result.status === true){
+                props.closePlanSettingsModal();
+            }
+        }
     }
 
     return (
         <div className={styles.userSettingsContainer}>
             <div className={styles.userSettingsPaper}>
                 <div className={styles.userSettingsOptionsContainer}>
-                    <h2>{userSettings && userSettings.name ? userSettings.name : "2023 Plan Settings"}</h2>
+                    <h2 className="text-center">{userSettings && userSettings.name ? userSettings.name : "2023 Plan Settings"}</h2>
                     <div className={styles.userSettingsInputRow}>
                         <input
                             type="text"
@@ -82,7 +76,7 @@ const UserSettings = (props) => {
                         </div>
                     </div>
                 </div>
-                <button className={styles.settingsButton} onClick = {() => { saveSetting(), props.closePlanSettingsModal() }}>Save Changes</button>
+                <button className={styles.settingsButton} onClick = {() => { saveSetting() }}>Save Changes</button>
                 <button className={styles.settingsButton} onClick = {props.cancelSetting}>Cancel</button>
             </div>
         </div>
