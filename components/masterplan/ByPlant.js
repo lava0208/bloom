@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import React, { useState, useEffect } from "react";
 
 import { Modal, ModalBody } from "reactstrap";
@@ -29,10 +30,10 @@ const ByPlant = () => {
     }, [])
 
     const getAllPlantings = async () => {
-        var _result = await plantingService.getAll();        
+        var _result = await plantingService.getAll();
         setPlantings(_result.data);
     }
-
+   
     const close = () => {
         setPlantingEditModalOpen(false)
     }
@@ -46,7 +47,13 @@ const ByPlant = () => {
             <div className={styles.plantsContainer}>
                 {plantings.map((planting, i) => (
                     <div className={styles.plantContainer} key={i}>
-                        <div className={styles.plantImage}></div>
+                        <div className={styles.plantImage}>
+                            {
+                                planting.image && (
+                                    <img src={"/assets/upload/" + planting.image } alt="image" />
+                                )
+                            }
+                        </div>
                         <div className={styles.plantInfoContainer}>
                             <div className={styles.plantInfoHeaderContainer}>
                                 <div className={styles.plantInfoHeader}>

@@ -25,6 +25,7 @@ const CurrentPlan = (props) => {
         seeds: "",
         harvest: "",
         direct_sow: false,
+        direct_indoors: false,
         pinch: false,
         pot_on: false,
         succession: "",
@@ -49,13 +50,13 @@ const CurrentPlan = (props) => {
     //... get plan nand planting
     const [plant, setPlant] = useState({});
     const getPlantAndPlanting = async () => {
+        console.log(userService.getId());
         var _plan = await planService.getByUserId(userService.getId());
         var _plant = await plantService.getById(props.plantId);
-        
         var _planting = { ...planting };
-        _planting.plan_id = _plan.data._id;
-        _planting.name = _plant.data.name;
-        _planting.species = _plant.data.species;
+        _planting.plan_id = _plan ? _plan.data._id : "";
+        _planting.name = _plant ? _plant.data.name : "";
+        _planting.species = _plant ? _plant.data.species : "";
         setPlant(_plant.data);
         setPlanting(_planting);
     }
@@ -109,7 +110,7 @@ const CurrentPlan = (props) => {
                         <h4>Seeding</h4>
                         {seeds.map((element, i) => (
                             <button key={i} 
-                                onClick={() => {setActiveSeed(element.value), setPlanting({...planting, direct_sow: element.value === 1 ? true : false})}} 
+                                onClick={() => {setActiveSeed(element.value), setPlanting({...planting, direct_sow: element.value === 1 ? true : false, direct_indoors: element.value === 1 ? false : true})}}
                                 className={activeSeed === i + 1 ?  styles.selected : ''}
                                 value={planting.direct_sow}
                             >

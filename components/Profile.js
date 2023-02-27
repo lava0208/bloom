@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 import { userService } from "services";
 import bcrypt from "bcryptjs";
 
+import axios from "axios";
+
 import styles from "~styles/pages/profile.module.scss";
 
 const Profile = () => {
@@ -12,6 +14,7 @@ const Profile = () => {
         name: "",
         email: "",
         password: "",
+        profile_path: "",
         email_newsletter: false,
         share_custom_varieties: false
     });
@@ -19,6 +22,31 @@ const Profile = () => {
 
     const [originPassword, setOriginPassword] = useState("");
     const [errMsg, setErrMsg] = useState("");
+
+    const [uploading, setUploading] = useState(false);
+    const [selectedImage, setSelectedImage] = useState("");
+    const [selectedFile, setSelectedFile] = useState("");
+
+    const handleUpload = async () => {
+        setUploading(true);
+        try {
+            if(selectedFile !== ""){
+                const formData = new FormData();
+                formData.append("myImage", selectedFile);
+                await axios.post("/api/upload", formData)
+                .then(response => {
+                    if(response.data.status == true){
+                        user.profile_path = response.data.data
+                        setUploading(false);
+                    }
+                });
+            }
+            
+        } catch (error) {
+            console.log(error.response?.data);
+        }        
+    };
+    
 
     useEffect(() => {
         getUser();
@@ -31,6 +59,15 @@ const Profile = () => {
             setUser(user.data);
         }
     }
+
+    const updateUser = async () => {
+        const result = await userService.update(userService.getId(), user);
+        if(result.status === true){
+            alert(result.message)
+        }else{
+            setErrorText(result.message)
+        }
+    }
     
     const saveUser = () => {
         bcrypt.compare(user.password, originPassword, async function (err, isMatch) {
@@ -40,12 +77,13 @@ const Profile = () => {
                 setErrMsg("Use correct password.");
             } else {
                 setErrMsg(" ");
-                const result = await userService.update(userService.getId(), user);
-                if(result.status === true){
-                    alert(result.message)
+                if (selectedFile){
+                    handleUpload().then(function(){
+                        updateUser()
+                    });
                 }else{
-                    setErrorText(result.message)
-                }
+                    updateUser()
+                }                
             }
         });
     }
@@ -63,7 +101,25 @@ const Profile = () => {
         <h2 className={styles.subHeader}>Hello, {user.name}</h2>
         <div className={styles.profilesContainer}>
             <div className={styles.profileContainer}>
-                <div className={styles.profileImage}></div>
+                <label className={styles.profileImage}>
+                    <input
+                        type="file"
+                        accept="image/png, image/gif, image/jpeg"
+                        hidden
+                        onChange={({ target }) => {
+                            if (target.files) {
+                                const file = target.files[0];
+                                setSelectedImage(URL.createObjectURL(file));
+                                setSelectedFile(file);
+                            }
+                        }}
+                    />
+                    {selectedImage ? (
+                        <img src={selectedImage} alt="profile" />
+                    ) : ( user.profile_path &&
+                        <img src={"/assets/upload/" + user.profile_path} alt="blank profile" />
+                    )}
+                </label>
                 <h3>Change Photo</h3>
                 <div className={styles.inputContainer}>
                     <input

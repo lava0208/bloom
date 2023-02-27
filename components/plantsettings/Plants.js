@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable react-hooks/rules-of-hooks */
 import React, { useState, useEffect } from "react";
 import { Modal, ModalHeader, ModalBody } from "reactstrap";
@@ -76,7 +77,13 @@ const Plants = () => {
             <div className={styles.plantsContainer}>
                 {filteredArray.map((plant, i) => (
                     <div className={styles.plantContainer} key={i} onMouseEnter={() => setIsShowActionText(i)} onMouseLeave={() => setIsShowActionText(-1)}>
-                        <div className={styles.plantImage}></div>
+                        <div className={styles.plantImage}>
+                            {
+                                plant.image && (
+                                    <img src={"/assets/upload/" + plant.image } alt="image" />
+                                )
+                            }
+                        </div>
                         <div className={styles.plantInfoContainer}>
                             <h3>{plant.name}</h3>
                             <h4>{plant.species}</h4>

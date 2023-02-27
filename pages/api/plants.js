@@ -9,7 +9,7 @@ export default async function handler(req, res) {
         //... create a plant        
         case "POST":
             await db.collection("plants").insertOne(req.body);
-            return res.json({ status: true, data: 'A plant is created successfully.' });
+            return res.json({ status: true, message: 'A plant is created successfully.' });
 
         //... get all plants or plant by id
         case "GET":
@@ -33,7 +33,8 @@ export default async function handler(req, res) {
                         name: req.body.name,
                         species: req.body.species,
                         description: req.body.description,
-                        direct_sow_early: req.body.direct_sow_early,
+                        image: req.body.image,
+                        direct_seed: req.body.direct_seed,
                         direct_sow_late: req.body.direct_sow_late,
                         earliest_seed: req.body.earliest_seed,
                         latest_seed: req.body.latest_seed,

@@ -1,5 +1,8 @@
+/* eslint-disable @next/next/no-img-element */
 import React, { useState, useEffect } from "react";
 import moment from "moment";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 import { plantService, taskService } from "services";
 
@@ -18,16 +21,36 @@ const ByPlantDetail = (props) => {
         var _plant = await plantService.getById(props.plantId);
         setPlant(_plant.data);
         var _tasks = await taskService.getByPlantingId(props.plantingId);
-        setTaskArr(_tasks.data)
+        var _taskArr = [];
+        _tasks.data.forEach(element => {
+            var _taskObj = {
+                planting_id: props.plantingId,
+                id: element._id,
+                title: element.title,
+                scheduled_at: element.scheduled_at,
+                duration: element.duration,
+                note: element.note,
+                type: element.type,
+                rescheduled_at: element.rescheduled_at,
+                completed_at: element.completed_at
+            }
+            _taskArr.push(_taskObj)
+        });
+        console.log(_taskArr);
+        setTaskArr(_taskArr)
+    }
+
+    const dateFormat = (date) =>{
+        return moment(date).format("YYYY/MM/DD")
     }
 
     const [customTask, setCustomTask] = useState({
         planting_id: props.plantingId,
         title: "",
-        scheduled_at: "",
+        scheduled_at: moment().format('YYYY/MM/DD'),
         duration: "",
         note: "",
-        type: "",
+        type: "incomplete",
         rescheduled_at: "",
         completed_at: ""
     });
@@ -42,10 +65,10 @@ const ByPlantDetail = (props) => {
                 ...taskArr, {
                     planting_id: props.plantingId,
                     title: "",
-                    scheduled_at: "",
+                    scheduled_at: moment().format('YYYY/MM/DD'),
                     duration: "",
                     note: "",
-                    type: "",
+                    type: "incomplete",
                     rescheduled_at: "",
                     completed_at: ""
                 }
@@ -77,7 +100,13 @@ const ByPlantDetail = (props) => {
             </div>
             <div className={styles.plantInfoContainer}>
                 <div className={styles.detailContainer}>
-                    <div className={styles.detailImage}></div>
+                    <div className={styles.detailImage}>
+                        {
+                            plant.image && (
+                                <img src={"/assets/upload/" + plant.image } alt="image" />
+                            )
+                        }
+                    </div>
                     <div className={styles.detailInfo}>
                         <h3>{plant.name}</h3>
                         <h5>{plant.species}</h5>
@@ -97,19 +126,20 @@ const ByPlantDetail = (props) => {
                             });
                         }}
                     />
-                    <input
-                        type="text"
-                        placeholder="Date"
-                        value={customTask.scheduled_at}
+                    <DatePicker
+                        placeholderText="Date"
+                        className={customTask.scheduled_at}
+                        value={dateFormat(customTask.scheduled_at)}
+                        selected={new Date(customTask.scheduled_at)}
                         onChange={(e) => {
                             setCustomTask({
                                 ...customTask,
-                                scheduled_at: e.target.value,
+                                scheduled_at: e,
                             });
                         }}
                     />
                     <input
-                        type="text"
+                        type="number"
                         placeholder="Duration"
                         value={customTask.duration}
                         onChange={(e) => {
@@ -130,7 +160,7 @@ const ByPlantDetail = (props) => {
                             });
                         }}
                     />
-                    <button onClick={() => addCustomTask()}>Add</button>
+                    <button className={styles.add} onClick={() => addCustomTask()}>Add</button>
                 </div>
             </div>
             <div className={styles.plantOptionsContainer}>
@@ -162,7 +192,7 @@ const ByPlantDetail = (props) => {
                             </select>
                             <div className={styles.buttons}>
                                 {/* <button>Duplicate</button>  */}
-                                <button onClick={() => deleteTask(task._id)}>Delete</button>
+                                <button onClick={() => deleteTask(task.id)}>Delete</button>
                             </div>
                         </div>
                     </div>

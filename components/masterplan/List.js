@@ -5,8 +5,6 @@ import { Modal, ModalBody } from "reactstrap";
 
 import { taskService } from "services";
 
-import { dummyList } from "~lib/dummy";
-
 import 'bootstrap/dist/css/bootstrap.css';
 import styles from "~styles/components/masterplan/list.module.scss";
 
@@ -15,17 +13,20 @@ import CalendarDetail from "./CalendarDetail";
 const List = () => {
     const [event, setEvent] = useState({});
     const [modalOpen, setModalOpen] = useState(false);
-    const [activeEvent, setActiveEvent] = useState(-1);
-    const saveSchedule = (e) => {
+    const completeTask = async (id) => {
+        var _result = await taskService.updateByStatus(id);
+        alert(_result.message);
         setModalOpen(false);
-        setActiveEvent(e.schedule.id)
+        getAllTasks();
     }
     const cancelSchedule = () => {
         setModalOpen(false);
     }
+    const [taskId, setTaskId] = useState("");
     const openSchedule = (event) => {
         setModalOpen(true)
         setEvent(event)
+        setTaskId(event._id);
     }
 
     const [todayTasks, setTodayTasks] = useState([]);
@@ -53,14 +54,20 @@ const List = () => {
                 </h2>
                 <div className={styles.tasksScrollContainer}>
                     {overdueTasks.map((task, i) => (
-                        <div className={styles.taskContainer} key={i}>
+                        <div className={styles.taskContainer} key={i} onClick={() => openSchedule(task)}>
                             <div className={styles.taskInfo}>
                                 <h2>{task.title}</h2>
                                 <h3 className={styles.overdue}>
                                     {moment(task.scheduled_at).fromNow()}
                                 </h3>
                             </div>
-                            <div className={`${styles.taskCap} ${styles.overdue}`}></div>
+                            <div className={`${styles.taskCap} ${styles.overdue}`}>
+                                {
+                                    task.type === "complete" && (
+                                        <img src="/assets/checkbox.png" alt="checkbox" />
+                                    )
+                                }
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -68,7 +75,7 @@ const List = () => {
             <div className={styles.tasksContainer}>
                 <h2 className={`${styles.tasksContainerTitle} `}>Today</h2>
                 <div className={styles.tasksScrollContainer}>
-                    {dummyList.today.map((task, i) => (
+                    {todayTasks.map((task, i) => (
                         <div className={styles.taskContainer} key={i} onClick={() => openSchedule(task)}>
                             <div className={styles.taskInfo}>
                                 <h2>{task.title}</h2>
@@ -76,10 +83,10 @@ const List = () => {
                             </div>
                             <div className={`${styles.taskCap} ${styles.today}`}>
                                 {
-                                    activeEvent === i + 1 && (
+                                    task.type === "complete" && (
                                         <img src="/assets/checkbox.png" alt="checkbox" />
                                     )
-                                }                                
+                                }
                             </div>
                         </div>
                     ))}
@@ -89,12 +96,18 @@ const List = () => {
                 <h2 className={`${styles.tasksContainerTitle} `}>Tomorrow</h2>
                 <div className={styles.tasksScrollContainer}>
                     {tomorrowTasks.map((task, i) => (
-                        <div className={styles.taskContainer} key={i}>
+                        <div className={styles.taskContainer} key={i} onClick={() => openSchedule(task)}>
                             <div className={styles.taskInfo}>
                                 <h2>{task.title}</h2>
                                 <h3>Tomorrow</h3>
                             </div>
-                            <div className={`${styles.taskCap} ${styles.tomorrow}`}></div>
+                            <div className={`${styles.taskCap} ${styles.tomorrow}`}>
+                                {
+                                    task.type === "complete" && (
+                                        <img src="/assets/checkbox.png" alt="checkbox" />
+                                    )
+                                }
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -112,7 +125,7 @@ const List = () => {
             </div>
             <Modal toggle={() => setModalOpen(!modalOpen)} isOpen={modalOpen} centered modalClassName="modifyPlanModal">
                 <ModalBody>
-                    <CalendarDetail schedule = {event} saveSchedule={saveSchedule} cancelSchedule={cancelSchedule} />
+                    <CalendarDetail taskId={taskId} schedule = {event} completeTask={completeTask} cancelSchedule={cancelSchedule} />
                 </ModalBody>
             </Modal>
         </div>

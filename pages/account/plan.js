@@ -2,8 +2,12 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { userService, planService } from "services";
-
+import GoogleMapReact from 'google-map-react';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import styles from "~styles/pages/account/register.module.scss";
+
+const AnyReactComponent = ({ text }) => <div>{text}</div>;
 
 const Plan = () => {
     const [plan, setPlan] = useState({
@@ -11,8 +15,8 @@ const Plan = () => {
         name: "",
         location: "",
         size: "",
-        last_frost: "",
-        first_frost: ""
+        last_frost: new Date(),
+        first_frost: new Date()
     });
     const [error, setError] = useState(false);
 
@@ -22,16 +26,24 @@ const Plan = () => {
         if (plan.name !== "" && plan.location !== "" && plan.size !== "") {
             plan.userid = userService.getId();
             const result = await planService.create(plan)
-            if(result.status === true){
+            if (result.status === true) {
                 alert(result.message);
                 router.push("/account/payment")
-            }else{
+            } else {
                 setError(true);
-            }      
+            }
         } else {
             setError(true);
         }
     }
+
+    const defaultProps = {
+        center: {
+            lat: 10.99835602,
+            lng: 77.01502627
+        },
+        zoom: 11
+    };
 
     return (
         <div className={styles.screen}>
@@ -79,34 +91,47 @@ const Plan = () => {
                             }}
                         />
                     </div>
-                    <div className={styles.detailsLocationContainer}></div>
+                    <div className={styles.detailsLocationContainer}>
+                        <div style={{ height: '150px', width: '100%' }}>
+                            <GoogleMapReact
+                                bootstrapURLKeys={{ key: "AIzaSyBViecdl6O87Q7WXPt08wLpyYx-SivFa-U" }}
+                                defaultCenter={defaultProps.center}
+                                defaultZoom={defaultProps.zoom}
+                            >
+                                <AnyReactComponent
+                                    lat={59.955413}
+                                    lng={30.337844}
+                                    text="My Marker"
+                                />
+                            </GoogleMapReact>
+                        </div>
+                    </div>
                 </div>
 
-                <input
-                    type="text"
-                    className={styles.input}
+                <DatePicker
                     placeholder="Last Frost date"
-                    value={plan.last_frost}
+                    className={styles.input}
+                    selected={plan.last_frost}
                     onChange={(e) => {
                         setPlan({
                             ...plan,
-                            last_frost: e.target.value,
+                            last_frost: e,
                         });
                     }}
                 />
 
-                <input
-                    type="text"
-                    className={styles.input}
+                <DatePicker
                     placeholder="First Frost date"
-                    value={plan.first_frost}
+                    className={styles.input}
+                    selected={plan.first_frost}
                     onChange={(e) => {
                         setPlan({
                             ...plan,
-                            first_frost: e.target.value,
+                            first_frost: e,
                         });
                     }}
                 />
+
                 {
                     error && (
                         <p className={styles.errorText}>Please fill all fields.</p>

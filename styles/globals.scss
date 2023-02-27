@@ -90,3 +90,19 @@ h6 {
         }
     }
 }
+
+.react-datepicker-popper{
+    z-index: 100!important;
+}
+
+@media screen and (max-width: 576px) {
+    .modal-dialog {
+        .modal-content {
+            .modal-header {
+                .modal-title{
+                    font-size: 1.5rem;
+                }
+            }
+        }
+    }
+}

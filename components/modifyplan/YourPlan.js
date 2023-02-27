@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Modal, ModalBody } from "reactstrap";
 
-import { plantingService } from "services";
+import { plantingService, taskService } from "services";
 import CurrentPlan from "./CurrentPlan";
 import UserSettings from "~components/plantsettings/UserSettings";
 
@@ -29,6 +29,7 @@ const YourPlan = () => {
     }
     const deletePlanting = async (id) => {
         if (confirm('Are you sure you want to delete this plan?')) {
+            await taskService.deleteByPlantingId(id);
             await plantingService.delete(id);
             getAllPlantings();
         }

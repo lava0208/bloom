@@ -38,6 +38,12 @@
         background: $blue;
         border-radius: 30px;
         flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        img{
+            max-width: 100%;
+        }
     }
     
     .noteInfo {
@@ -106,6 +112,24 @@
 
         &:hover {
             background: $purple;
+        }
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .eventContainer {
+        display: block;
+    }
+    .noteContainer,
+    .taskContainer {
+        width: 100%;
+        margin-bottom: 1rem;
+        display: block;
+    }
+    .noteContainer {
+        display: block;
+        .noteImage {
+            height: 150px;
         }
     }
 }

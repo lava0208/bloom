@@ -14,15 +14,15 @@ export default async function handler(req, res) {
         case "GET":
             const id = req.query.id;
             const userid = req.query.userid;
-            if(id === undefined && userid === undefined){
-                let plans = await db.collection("plans").find({}).toArray();
-                return res.json({ status: true, data: plans });
-            }else if(id === undefined){
+            if(id){
+                let plan = await db.collection("plans").findOne({_id: new ObjectId(id)});
+                return res.json({ status: true, data: plan });
+            }else if(userid){
                 let plan = await db.collection("plans").findOne({userid: userid});
                 return res.json({ status: true, data: plan });
             }else{
-                let plan = await db.collection("plans").findOne({id: id});
-                return res.json({ status: true, data: plan });
+                let plans = await db.collection("plans").find({}).toArray();
+                return res.json({ status: true, data: plans });
             }
         //... update a plan
         case "PUT":

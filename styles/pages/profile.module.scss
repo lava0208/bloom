@@ -24,6 +24,7 @@
 .container {
     flex: 1;
     padding: 1.5rem;
+    width: calc(100% - 80px);
 
     .profilesContainer {
         display: flex;
@@ -44,14 +45,22 @@
                 color: $white;
                 font-size: 1.5rem;
                 font-weight: 700;
+                margin-top: 1rem;
             }
 
             .profileImage {
                 width: 200px;
                 height: 200px;
-                background-color: $white;
                 border-radius: 50%;
                 margin: 1rem auto;
+                background-color: $white;
+                img{
+                    max-height: 200px;
+                    max-width: 100%;
+                    border-radius: 50%;
+                    display: block;
+                    margin: auto;
+                }
             }
 
             .inputContainer {
@@ -179,7 +188,7 @@
             .proContainer{
                 background-color: $purple;
                 border-radius: 30px;
-                padding: 0 0 2rem;
+                padding: 0 1rem 2rem;
                 max-width: 450px;
                 margin: 2rem auto 0;
 
@@ -208,4 +217,61 @@
     font-weight: bold;
     margin-bottom: 0;
     margin-top: 1rem;
+}
+
+@media screen and (max-width: 576px) {
+    .header{
+        font-size: 1.2rem;
+    }
+    .subHeader{
+        font-size: 1.8rem;
+        margin-top: 0;
+        margin-bottom: 1rem;
+    }
+    .container {
+        .profilesContainer {
+            display: block;
+            .profileContainer {  
+                padding: 2rem 1rem;
+                margin-bottom: 2rem;
+                .inputContainer{
+                    input, button{
+                        width: 80%;
+                    }
+                }
+                .preferenceContainer{
+                    padding: 2rem 1rem;
+                    .flexContainers{
+                        width: 100%;
+                    }
+                }           
+                button{
+                    &.button3{
+                        width: 100%;
+                        font-size: 1.2rem;
+                    }
+                    &.button2{
+                        width: 100%;
+                        position: relative;
+                        left: 0;
+                        bottom: 0;
+                    }
+                }
+                h2{
+                    font-size: 2rem;
+                }
+                h1{
+                    font-size: 64px;
+                }
+                .proContainer{
+                    img{
+                        width: 150px;
+                    }
+                    .benefitContainer{
+                        width: 100%;
+                    }
+                }
+            }
+        }
+    }
 }

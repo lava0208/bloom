@@ -26,7 +26,7 @@ export default async function handler(req, res) {
                 data.tomorrow = await db.collection("tasks").find({scheduled_at: moment().add(1, 'days').format('YYYY/MM/DD')}).toArray();
                 data.week = await db.collection("tasks").find({
                     scheduled_at: {
-                        $gt: moment().add(-7, 'days').format('YYYY/MM/DD'),
+                        $gt: moment().add(-6, 'days').format('YYYY/MM/DD'),
                         $lt: moment().add(1, 'days').format('YYYY/MM/DD')
                     }
                 }).toArray();
@@ -39,7 +39,7 @@ export default async function handler(req, res) {
                 data.overdue = await db.collection("tasks").find({
                     scheduled_at: {
                         $gt: moment().add(-1000, 'days').format('YYYY/MM/DD'),
-                        $lt: moment().add(1, 'days').format('YYYY/MM/DD')
+                        $lt: moment().add(0, 'days').format('YYYY/MM/DD')
                     }
                 }).toArray();
                 data.season = await db.collection("tasks").find({
@@ -48,6 +48,7 @@ export default async function handler(req, res) {
                         $lt: moment().add(1, 'days').format('YYYY/MM/DD')
                     }
                 }).toArray();
+                data.all = await db.collection("tasks").find({}).toArray();
                 return res.json({ status: true, data: data });
             }else{
                 let tasks = await db.collection("tasks").find({}).toArray();
@@ -56,13 +57,30 @@ export default async function handler(req, res) {
 
         //... update a task
         case "PUT":
-            await db.collection("tasks").deleteMany({planting_id: req.query.plantingid});
-            await db.collection("tasks").insertMany(req.body);
+            if(req.query.iscomplete){
+                await db.collection("tasks").updateOne(
+                    {
+                        _id: new ObjectId(req.query.id),
+                    },
+                    {
+                        $set: {
+                            "type": "complete"
+                        },
+                    }
+                );
+            }else{
+                await db.collection("tasks").deleteMany({planting_id: req.query.plantingid});
+                await db.collection("tasks").insertMany(req.body);
+            }
             return res.json({ status: true, message: 'task is updated successfully.' });
 
         //... delete a task
         case "DELETE":
-            await db.collection("tasks").deleteOne({_id: new ObjectId(req.query)});
+            if(req.query.id){
+                await db.collection("tasks").deleteOne({_id: new ObjectId(req.query)});                
+            }else{
+                await db.collection("tasks").deleteMany({planting_id: req.query.plantingid});
+            }
             return res.json({ status: true, message: 'The task is deleted successfully.' });
     }
 }

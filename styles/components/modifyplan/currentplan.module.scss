@@ -238,3 +238,24 @@
         }
     }
 }
+
+@media screen and (max-width: 576px) {
+    .currentPlanContainer {
+        display: block;
+    }
+    .planDetailsContainer,
+    .planOptionsContainer {
+        width: 100%;
+        display: block;
+        margin-bottom: 1rem;
+    }
+    .planImage {
+        height: 150px;
+    }
+    .successionContainer {
+        display: block;
+    }
+    .successionCheckboxesContainer {
+        padding: 10px;
+    }
+}

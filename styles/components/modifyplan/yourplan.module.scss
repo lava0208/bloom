@@ -19,7 +19,6 @@
 
     .planSettings {
         margin-bottom: 2rem;
-        padding: 0.4rem 1.5rem;
         border-radius: 15px;
         width: 85%;
         display: flex;
@@ -141,4 +140,18 @@
     font-weight: 700;
     font-style: italic;
     font-size: 0.7rem;
+}
+
+@media screen and (max-width: 768px) {
+    .container {
+        width: 12rem;
+    }
+}
+
+@media screen and (max-width: 575px) {
+    .container {
+        width: calc(100% - 3rem);
+        margin: 1.5rem;
+        border-radius: 10px;
+    }
 }

@@ -3,13 +3,16 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { userService } from "services";
 
+import axios from "axios";
+
 import styles from "~styles/pages/account/register.module.scss";
 
 const Register = () => {
     const [user, setUser] = useState({
         name: "",
         email: "",
-        password: ""
+        password: "",
+        profile_path: ""
     });
 
     const [error, setError] = useState(false);
@@ -26,17 +29,51 @@ const Register = () => {
         return true;
     }
 
+    const [uploading, setUploading] = useState(false);
+    const [selectedImage, setSelectedImage] = useState("");
+    const [selectedFile, setSelectedFile] = useState("");
+
+    const handleUpload = async () => {
+        setUploading(true);
+        try {
+            if(selectedFile !== ""){
+                const formData = new FormData();
+                formData.append("myImage", selectedFile);
+                await axios.post("/api/upload", formData)
+                .then(response => {
+                    if(response.data.status == true){
+                        user.profile_path = response.data.data
+                        setUploading(false);
+                    }
+                });
+            }
+            
+        } catch (error) {
+            console.log(error.response?.data);
+        }        
+    };
+
+    const registerUser = async () => {
+        const result = await userService.register(user);
+        if (result.status === true) {
+            alert(result.message);
+            await userService.setId(result.data.insertedId);
+            router.push("/account/plan")
+        } else {
+            setError(true);
+            setErrorText(result.message)
+        }
+    }
+
     const register = async () => {
         if (user.name !== "" && user.email !== "" && user.password !== "") {
             if (emailValidation()) {
-                const result = await userService.register(user);
-                if(result.status === true){
-                    alert(result.message);
-                    await userService.setId(result.data.insertedId);
-                    router.push("/account/plan")
+                if (selectedFile){
+                    handleUpload().then(function(){
+                        registerUser()
+                    });
                 }else{
-                    setError(true);
-                    setErrorText(result.message)
+                    registerUser()
                 }
             }
         } else {
@@ -78,7 +115,25 @@ const Register = () => {
                             }}
                         />
                     </div>
-                    <div className={styles.detailsProfilePictureContainer}></div>
+                    <label className={styles.detailsProfilePictureContainer}>
+                        <input
+                            type="file"
+                            accept="image/png, image/gif, image/jpeg"
+                            hidden
+                            onChange={({ target }) => {
+                                if (target.files) {
+                                    const file = target.files[0];
+                                    setSelectedImage(URL.createObjectURL(file));
+                                    setSelectedFile(file);
+                                }
+                            }}
+                        />
+                        {selectedImage ? (
+                            <img src={selectedImage} alt="profile" />
+                        ) : (
+                            <img src={"/assets/profile.png"} alt="blank profile" />
+                        )}
+                    </label>
                 </div>
 
                 <input
@@ -102,10 +157,18 @@ const Register = () => {
             </div>
 
             <div
+                disabled={uploading}
+                style={{ opacity: uploading ? ".5" : "1" }}
                 className={styles.nextButtonContainer}
                 onClick={() => register()}
             >
-                <h5>Next</h5>
+                {
+                    uploading? (
+                        <img src="/assets/loading.gif" alt="loading" />
+                    ) : (
+                        <h5>Next</h5>
+                    )
+                }
             </div>
         </div>
     );

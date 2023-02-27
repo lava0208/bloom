@@ -78,7 +78,7 @@ const Dashboard = () => {
                         <h3>PLANTS THIS SEASON</h3>
                     </div>
                 </div>
-                <div className={styles.dashboardRow}>
+                <div className={styles.dashboardRow + " row1"}>
                     <div className={styles.blooms}>
                         <h2>BLOOMS</h2>
                         <h4>NEXT WEEK</h4>

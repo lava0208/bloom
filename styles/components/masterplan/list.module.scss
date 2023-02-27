@@ -63,14 +63,14 @@
         font-weight: 800;
         font-size: 1rem;
         margin-bottom: 3px;
-        white-space: nowrap;
+        text-align: center;
     }
 
     h3 {
         font-size: 0.8rem;
         color: $black;
-        white-space: nowrap;
         margin-bottom: 0;
+        text-align: center;
 
         &.overdue {
             color: $red;
@@ -148,5 +148,26 @@
         margin-bottom: 0;
         color: $white;
         font-size: 0.8rem;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+    .thisWeekContainer {
+        h2 {
+            font-size: 1.5rem;
+        }
+    }
+    .tasksContainerTitle {
+        font-size: 1.5rem;
     }
 }

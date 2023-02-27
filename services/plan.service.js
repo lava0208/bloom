@@ -3,6 +3,7 @@ import { apiUrl } from 'config';
 export const planService = {
     getAll,
     create,
+    getById,
     getByUserId,
     update,
     delete: _delete
@@ -27,6 +28,16 @@ async function create(params) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify(params)
+    })
+    return response.json();
+}
+
+async function getById(id) {
+    const response = await fetch(`${baseUrl}?id=` + id, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json"
+        }
     })
     return response.json();
 }

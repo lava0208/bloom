@@ -11,6 +11,7 @@
 .container {
     flex: 1;
     padding: 1.5rem;
+    width: calc(100% - 14rem);
 }
 
 .header {
@@ -101,7 +102,7 @@
     h3 {
         font-weight: 700;
         font-size: 1rem;
-        white-space: nowrap;
+        text-align: center;
     }
 
     &.tomorrow {
@@ -219,7 +220,6 @@
     }
 }
 
-
 .progressContainer {
     background: $blue;
     border-radius: 48px;
@@ -302,5 +302,65 @@
         flex: 1;
         background: $white;
         border-radius: 48px;
+    }
+}
+
+.row1 {
+    display: flex;
+    gap: 1rem;
+}
+
+@media screen and (max-width: 1024px) {
+    .dashboardRow {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+    .blooms{
+        padding: 2rem;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .row1 {
+        grid-template-columns: 1fr;
+    }
+    .blooms{
+        margin-bottom: 1rem;
+        h2{
+            font-size: 1.8rem;
+        }
+    }
+    .progressContainer {
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+        }
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .container{
+        width: calc(100% - 80px);
+    }
+    .dashboardRow {
+        grid-template-columns: 1fr;
+    }
+    .greetingContainer {
+        padding: 1rem;
+        border-radius: 30px;
+    }
+    .header{
+        font-size: 1.2rem;
+    }
+    .subHeader{
+        font-size: 1.8rem;
+        margin-top: 0;
+        margin-bottom: 1rem;
+    }
+    .progressContainer, .blooms {
+        padding: 2rem 1rem;
+        h5{
+            font-size: 1rem;
+        }
     }
 }

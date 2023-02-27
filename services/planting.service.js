@@ -4,6 +4,7 @@ export const plantingService = {
     getAll,
     create,
     getById,
+    getByPlantId,
     update,
     delete: _delete
 };
@@ -33,6 +34,16 @@ async function create(params) {
 
 async function getById(id) {
     const response = await fetch(`${baseUrl}?id=` + id, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    return response.json();
+}
+
+async function getByPlantId(id) {
+    const response = await fetch(`${baseUrl}?plantId=` + id, {
         method: "GET",
         headers: {
             "Content-Type": "application/json"

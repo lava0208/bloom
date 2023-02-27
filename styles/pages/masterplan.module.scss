@@ -13,6 +13,7 @@
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
+    width: calc(100% - 14rem);
 }
 
 .header {
@@ -69,4 +70,28 @@
     border-bottom-left-radius: 38px;
     display: flex;
     flex: 1 1;
+}
+
+@media screen and (max-width: 576px) {
+    .container {
+        width: calc(100% - 80px);
+        padding: 1rem;
+    }
+    .header{
+        font-size: 1.2rem;
+    }
+    .subHeader{
+        font-size: 1.8rem;
+        margin-top: 0;
+        margin-bottom: 1rem;
+    }
+    .tab {
+        padding: 0.5rem 1rem;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        margin-right: 0.5rem;
+        h2{
+            font-size: 0.8rem;
+        }
+    }
 }
