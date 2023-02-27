@@ -1,40 +1,61 @@
-import React, { Component } from "react";
-import { Map, Marker, GoogleApiWrapper } from "google-maps-react";
+import React, {useState} from 'react'
+import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 
-export class MapContainer extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            position: {}
-        };
-        if(props.currentLocation && props.currentLocation.lat !== undefined){
-            this.state.position = props.currentLocation
-        }else{
-            this.state.position = { lat: 43.255721, lng: -79.871102 }            
-        }
-        this.onMapClicked = this.onMapClicked.bind(this);
-    }
-    onMapClicked(props, map, e) {
-        let location = this.state.position;
+const containerStyle = {
+    width: '100%',
+    height: '150px'
+};
+
+const center = {
+    lat: 43.255721,
+    lng: -79.871102
+};
+
+function MyComponent(props) {
+    const { isLoaded } = useJsApiLoader({
+        id: 'google-map-script',
+        googleMapsApiKey: "AIzaSyDZfVO29Iytspv4xz7S68doIoiztiRLhbk"
+    })
+
+    const [map, setMap] = useState(null)
+    const [position, setposition] = useState(center);
+
+    const onLoad = React.useCallback(function callback(map) {
+        const bounds = new window.google.maps.LatLngBounds(center);
+        map.fitBounds(bounds);
+
+        setMap(map)
+    }, [])
+
+    const onUnmount = React.useCallback(function callback(map) {
+        setMap(null)
+    }, [])
+
+    const onMapClicked = (e) => {
+        let location = {};
         location.lat = e.latLng.lat();
         location.lng = e.latLng.lng();
 
-        this.setState({
-            position: location
-        })
-        this.props.getPosition(this.state.position)
+        setposition(location);
+        props.getPosition(position)
     }
 
-    render() {
-        return (
-            <Map google={window.google} zoom={10} className={"map"} initialCenter={this.state.position} onClick={this.onMapClicked}>
-                <Marker position={{ lat: this.state.position.lat, lng: this.state.position.lng }} name={'Current location'} />
-            </Map>
-        )
-    }
-  
+    return isLoaded ? (
+        <GoogleMap
+            mapContainerStyle={containerStyle}
+            center={center}
+            zoom={8}
+            onLoad={onLoad}
+            onUnmount={onUnmount}
+            onClick={onMapClicked}
+        >
+            <Marker 
+                icon={"/assets/marker.svg"} 
+                position={{ lat: position.lat, lng: position.lng }}
+            />
+            <></>
+        </GoogleMap> 
+    ) : <></>
 }
-export default GoogleApiWrapper({
-  apiKey: "AIzaSyDZfVO29Iytspv4xz7S68doIoiztiRLhbk",
-  v: "3.30"
-})(MapContainer);
+
+export default React.memo(MyComponent)

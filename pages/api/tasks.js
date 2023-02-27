@@ -36,10 +36,13 @@ export default async function handler(req, res) {
                         $lt: moment().add(7, 'days').format('YYYY/MM/DD')
                     }
                 }).toArray();
+                console.log(moment("2023/01/01").format('YYYY/MM/DD'));
+                console.log(moment().format('YYYY/MM/DD'));
+                console.log(moment().add(1, 'days').format('YYYY/MM/DD'));
                 data.overdue = await db.collection("tasks").find({
                     scheduled_at: {
-                        $gt: moment().add(-1000, 'days').format('YYYY/MM/DD'),
-                        $lt: moment().add(0, 'days').format('YYYY/MM/DD')
+                        $gt: moment("2023/01/01").format('YYYY/MM/DD'),
+                        $lt: moment().format('YYYY/MM/DD')
                     }
                 }).toArray();
                 data.season = await db.collection("tasks").find({
