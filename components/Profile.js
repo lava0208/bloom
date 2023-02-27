@@ -116,8 +116,8 @@ const Profile = () => {
                     />
                     {selectedImage ? (
                         <img src={selectedImage} alt="profile" />
-                    ) : ( user.profile_path &&
-                        <img src={"/assets/upload/" + user.profile_path} alt="blank profile" />
+                    ) : (
+                        <img src={"/assets/upload/" + user.profile_path} alt="" />
                     )}
                 </label>
                 <h3>Change Photo</h3>

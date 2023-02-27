@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import moment from "moment";
 import { Calendar as BigCalendar, momentLocalizer } from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import { Modal, ModalBody } from "reactstrap";
+
+import { taskService } from "services";
 
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -14,57 +16,38 @@ import CalendarToolbar from "~components/masterplan/CalendarToolbar";
 import CalendarDetail from "./CalendarDetail";
 
 const CalendarTab = () => {
-    const [events, setEvents] = useState([
-        {
-            id: 1,
-            start: moment().toDate(),
-            end: moment().toDate(),
-            title: "Start Zinnia",
-            description: "King Orange Helium",
-            type: "start",
-            note: {
-                title: "Seed Note",
-                text: "King Orange Helium is a classic Zinnia, with large and easy to handle seeds. Start two seeds per cell, and lightly cover with vermiculite before moistening. Zinnias are large seedlings and should sprout up in just a few days."
-            },
-            detail:{
-                title: "Start 450 seeds",
-                text: "Light is NOT required for germination.",
-                day: 14
-            }
-        },
-        {
-            id: 2,
-            start: moment().toDate(),
-            end: moment().add(1, "days").toDate(),
-            title: "Harden off Lisianthus",
-            description: "King Orange Helium",
-            type: "harden",
-            note: {
-                title: "Harden Note",
-                text: "King Orange Helium is a Zinnia, which means it does not tolerate cold well. Hardening is essential."
-            },
-            detail:{
-                title: "Harden Zinnia",
-                text: "Bring Zinnia outdoors in the shade for a few hours.",
-                day: 7
-            }
-        },
-        {
-            id: 3,
-            start: moment("2022-07-10T17:31:19+00:00").toDate(),
-            end: moment("2022-07-10T17:31:19+00:00").add(1, "days").toDate(),
-            title: "Transplant Lisianthus",
-            description: "King Orange Helium",
-            type: "transplant",
-        },
-    ]);
+    const [alltasks, setAllTasks] = useState([]);
+    const [taskId, setTaskId] = useState("");
+    
+    useEffect(() => {
+        getAllTasks();
+    }, [])
 
+    const getAllTasks = async () => {
+        const taskArr = [];
+        var _result = await taskService.getAllByDate();
+        setAllTasks(_result.data.all);
+        _result.data.all.forEach(function(element , i){
+            var taskObj = {
+                id: element._id,
+                start: moment(element.scheduled_at).toDate(),
+                end: moment(element.scheduled_at).toDate(),
+                title: element.title,
+                type: element.type,
+                note: element.note,
+                description: element.note,
+                planting_id: element.planting_id,
+                duration: element.duration,
+            }
+            taskArr.push(taskObj);
+        });
+        setAllTasks(taskArr)
+    }
     const Calendar = withDragAndDrop(BigCalendar);
 
     const localizer = momentLocalizer(moment);
 
     const onEventResize = ({ event, start, end }) => {
-        console.log(event);
         const nextEvents = events.map((existingEvent) => {
             return existingEvent.id == event.id
                 ? { ...existingEvent, start, end }
@@ -86,15 +69,27 @@ const CalendarTab = () => {
 
     const eventStyleGetter = (event) => {
         let backgroundColor = "";
-        switch (event.type) {
-            case "start":
-                backgroundColor = "#505168";
+        switch (event.title) {
+            case "Cold Stratify":
+                backgroundColor = "#7bc9d8";
                 break;
-            case "harden":
+            case "Pot On":
                 backgroundColor = "#707070";
                 break;
-            case "transplant":
-                backgroundColor = "#eaf0ce";
+            case "Harvest":
+                backgroundColor = "#cce06b";
+                break;
+            case "Seed Indoors":
+                backgroundColor = "#7ae06b";
+                break;
+            case "Harden":
+                backgroundColor = "#e0b26b";
+                break;
+            case "Pinch":
+                backgroundColor = "#e06bc9";
+                break;
+            case "Transplant":
+                backgroundColor = "#6b3d91";
                 break;
             default:
                 backgroundColor = "#505168";
@@ -102,7 +97,7 @@ const CalendarTab = () => {
 
         let style = {
             backgroundColor,
-            color: event.type === "transplant" ? "#2e2e2e" : "#fff",
+            color: "#fff",
         };
 
         return {
@@ -116,11 +111,16 @@ const CalendarTab = () => {
     const chooseEvent = (event) => {
         setSchedule(event);
         setModalOpen(true);
+        setTaskId(event.id);
     }
 
-    const saveSchedule = () => {
+    const completeTask = async (id) => {
+        var _result = await taskService.updateByStatus(id);
+        alert(_result.message);
         setModalOpen(false);
+        getAllTasks();
     }
+
     const cancelSchedule = () => {
         setModalOpen(false);
     }
@@ -129,7 +129,7 @@ const CalendarTab = () => {
         <div className={styles.container}>
             <Calendar
                 localizer={localizer}
-                events={events}
+                events={alltasks}
                 onEventDrop={onEventDrop}
                 eventPropGetter={eventStyleGetter}
                 onEventResize={onEventResize}
@@ -143,7 +143,7 @@ const CalendarTab = () => {
             />
             <Modal toggle={() => setModalOpen(!modalOpen)} isOpen={modalOpen} centered modalClassName="modifyPlanModal">
                 <ModalBody>
-                    <CalendarDetail schedule = {schedule} saveSchedule={saveSchedule} cancelSchedule={cancelSchedule} />
+                    <CalendarDetail taskId={taskId} schedule = {schedule} completeTask={completeTask} cancelSchedule={cancelSchedule} />
                 </ModalBody>
             </Modal>
         </div>

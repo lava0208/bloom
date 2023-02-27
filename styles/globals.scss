@@ -95,6 +95,21 @@ h6 {
     z-index: 100!important;
 }
 
+.settingMapContainer{
+    .map{
+        left: 0;
+        top: 0;
+    }
+}
+
+.planMapContainer{
+    .map{
+        width: 50%!important;
+        right: 0;
+        top: 0;
+    }
+}
+
 @media screen and (max-width: 576px) {
     .modal-dialog {
         .modal-content {

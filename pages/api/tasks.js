@@ -64,7 +64,8 @@ export default async function handler(req, res) {
                     },
                     {
                         $set: {
-                            "type": "complete"
+                            "type": "complete",
+                            "completed_at": new Date()
                         },
                     }
                 );

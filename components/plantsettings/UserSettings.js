@@ -3,26 +3,16 @@ import { userService, planService } from "services";
 import moment from "moment";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { GoogleMap, LoadScript } from '@react-google-maps/api';
+import GoogleMap from "pages/account/google-map";
 
 import styles from "~styles/components/plantsettings/userSettings.module.scss";
-
-const containerStyle = {
-    width: '100%',
-    height: '100%'
-};
-
-const center = {
-    lat: -3.745,
-    lng: -38.523
-};
 
 const UserSettings = (props) => {
     const [userSettings, setUserSettings] = useState({
         name: "",
         last_frost: new Date(),
         first_frost: new Date(),
-        location: ""
+        location: {}
     });
 
     useEffect(() => {
@@ -38,6 +28,10 @@ const UserSettings = (props) => {
 
     const dateFormat = (date) =>{
         return moment(date).format("YYYY/MM/DD")
+    }
+
+    const getPosition = (e) => {
+        userSettings.location = e
     }
 
     const saveSetting = async () => {
@@ -91,20 +85,8 @@ const UserSettings = (props) => {
                         />
                     </div>
                     <div className={styles.userSettingsInputRow}>
-                        <div className={styles.map}>
-                            {/* {userSettings.location ? userSettings.location.country + " " + userSettings.location.city : ""} */}
-                            <LoadScript
-                                googleMapsApiKey={process.env.GOOGLE_MAP_KEY}
-                            >
-                                <GoogleMap
-                                    mapContainerStyle={containerStyle}
-                                    center={center}
-                                    zoom={10}
-                                >
-                                    { /* Child components, such as markers, info windows, etc. */}
-                                    <></>
-                                </GoogleMap>
-                            </LoadScript>
+                        <div className={styles.mapContainer + " settingMapContainer"}>
+                            <GoogleMap getPosition={getPosition} currentLocation={userSettings.location} />
                         </div>
                     </div>
                 </div>
