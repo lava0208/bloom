@@ -78,14 +78,13 @@ const Dashboard = () => {
                         <h3>PLANTS THIS SEASON</h3>
                     </div>
                 </div>
-                <div className={styles.dashboardRow + " row1"}>
+                <div className={styles.dashboardRow + " " + styles.row1}>
                     <div className={styles.blooms}>
                         <h2>BLOOMS</h2>
                         <h4>NEXT WEEK</h4>
                         <div className={styles.bloomsContainer}>
                             {nextWeekTasks.map((bloom, i) => (
                                 <div className={styles.bloomContainer} key={i}>
-                                    {/* <img className={styles.background} src={'/assets/' + bloom.image} alt={bloom.title} /> */}
                                     <div className={styles.bloomInfoContainer}>
                                         <h4>{bloom.title}</h4>
                                         <h5>{bloom.note}</h5>

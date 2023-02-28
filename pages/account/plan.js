@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { userService, planService } from "services";
 import GoogleMap from "./google-map";
+import moment from "moment";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import styles from "~styles/pages/account/register.module.scss";
@@ -33,6 +34,10 @@ const Plan = () => {
         } else {
             setError(true);
         }
+    }
+
+    const dateFormat = (date) =>{
+        return moment(date).format("YYYY/MM/DD")
     }
 
     const getPosition = (e) => {
@@ -88,10 +93,11 @@ const Plan = () => {
                     placeholder="Last Frost date"
                     className={styles.input}
                     selected={plan.last_frost}
+                    value={dateFormat(plan.last_frost)}
                     onChange={(e) => {
                         setPlan({
                             ...plan,
-                            last_frost: e,
+                            last_frost: moment(e).format("YYYY/MM/DD"),
                         });
                     }}
                 />
@@ -100,10 +106,11 @@ const Plan = () => {
                     placeholder="First Frost date"
                     className={styles.input}
                     selected={plan.first_frost}
+                    value={dateFormat(plan.first_frost)}
                     onChange={(e) => {
                         setPlan({
                             ...plan,
-                            first_frost: e,
+                            first_frost: moment(e).format("YYYY/MM/DD"),
                         });
                     }}
                 />

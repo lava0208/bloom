@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useState } from "react";
 import { taskService, plantingService, plantService } from "services";
+import moment from "moment";
 
 import styles from "~styles/components/masterplan/calendardetail.module.scss";
 
@@ -15,6 +16,8 @@ const CalendarDetail = (props) => {
         getPlant();
     }, [])
 
+    const [duration, setDuration] = useState(0);
+
     const getTask = async () => {
         const _task = await taskService.getById(props.taskId);
         setTask(_task.data);
@@ -28,8 +31,14 @@ const CalendarDetail = (props) => {
                 setNoNextTask("There is no next task") 
             }else{
                 setNextTask(_nextItem);
+                setDuration(calcDuration(_nextItem.scheduled_at, _task.data.scheduled_at))
             }
         }
+    }
+
+    const calcDuration = (date1, date2) => {
+        console.log(date1 , date2);
+        return moment(date1).diff(moment(date2), 'days');
     }
 
     const getPlant = async () => {
@@ -71,7 +80,7 @@ const CalendarDetail = (props) => {
                         <h4>Next Task:</h4>
                         {
                             nextTask ? (
-                                <h5>{nextTask.title} in {task.duration} days</h5>
+                                <h5><i>{nextTask.title}</i> in {duration === 0 ? '1 day' : duration + " days"}</h5>
                             ):(
                                <h5> { noNextTask } </h5>
                             )

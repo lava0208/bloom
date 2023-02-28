@@ -153,13 +153,12 @@
 
     .bloomsContainer {
         display: grid;
-        grid-template-columns: auto auto auto;
+        grid-template-columns: repeat(3, 1fr);
         gap: 30px;
 
         .bloomContainer {
             position: relative;
-            height: 120px;
-            background-color: $black;
+            background-color: #323232b5;
             border-radius: 15px;
 
             .background {
@@ -184,17 +183,16 @@
             .bloomInfoContainer {
                 text-align: center;
                 border-radius: 20px;
-                height: 100%;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                position: absolute;
+                padding: 1.5rem 0.5rem;
                 width: 100%;
 
                 h4 {
                     margin-bottom: 0;
-                    font-size: 1.5rem;
+                    font-size: 1.3rem;
                     text-transform: uppercase;
                 }
 
@@ -317,6 +315,9 @@
     }
     .blooms{
         padding: 2rem;
+        .bloomsContainer {
+            grid-template-columns: repeat(2, 1fr);
+        }
     }
 }
 
@@ -361,6 +362,11 @@
         padding: 2rem 1rem;
         h5{
             font-size: 1rem;
+        }
+    }
+    .blooms{
+        .bloomsContainer {
+            grid-template-columns: 1fr;
         }
     }
 }

@@ -18,43 +18,40 @@ export default async function handler(req, res) {
                 let task = await db.collection("tasks").findOne({_id: new ObjectId(req.query.id)});
                 return res.json({ status: true, data: task });
             }else if(req.query.plantingid){
-                let tasks = await db.collection("tasks").find({planting_id: req.query.plantingid}).toArray();
+                let tasks = await db.collection("tasks").find({planting_id: req.query.plantingid}).sort({scheduled_at: 1}).toArray();
                 return res.json({ status: true, data: tasks });
             }else if(req.query.date){
                 let data = {};
-                data.today = await db.collection("tasks").find({scheduled_at: moment().format('YYYY/MM/DD')}).toArray();
-                data.tomorrow = await db.collection("tasks").find({scheduled_at: moment().add(1, 'days').format('YYYY/MM/DD')}).toArray();
+                data.today = await db.collection("tasks").find({scheduled_at: moment().format('YYYY/MM/DD')}).sort({scheduled_at: 1}).toArray();
+                data.tomorrow = await db.collection("tasks").find({scheduled_at: moment().add(1, 'days').format('YYYY/MM/DD')}).sort({scheduled_at: 1}).toArray();
                 data.week = await db.collection("tasks").find({
                     scheduled_at: {
-                        $gt: moment().add(-6, 'days').format('YYYY/MM/DD'),
-                        $lt: moment().add(1, 'days').format('YYYY/MM/DD')
+                        $gt: moment().startOf('week').format('YYYY/MM/DD'),
+                        $lt: moment().endOf('week').format('YYYY/MM/DD')
                     }
-                }).toArray();
+                }).sort({scheduled_at: 1}).toArray();
                 data.nextweek = await db.collection("tasks").find({
                     scheduled_at: {
                         $gt: moment().format('YYYY/MM/DD'),
-                        $lt: moment().add(7, 'days').format('YYYY/MM/DD')
+                        $lt: moment().add(6, 'days').format('YYYY/MM/DD')
                     }
-                }).toArray();
-                console.log(moment("2023/01/01").format('YYYY/MM/DD'));
-                console.log(moment().format('YYYY/MM/DD'));
-                console.log(moment().add(1, 'days').format('YYYY/MM/DD'));
+                }).sort({scheduled_at: 1}).toArray();
                 data.overdue = await db.collection("tasks").find({
                     scheduled_at: {
                         $gt: moment("2023/01/01").format('YYYY/MM/DD'),
                         $lt: moment().format('YYYY/MM/DD')
                     }
-                }).toArray();
+                }).sort({scheduled_at: 1}).toArray();
                 data.season = await db.collection("tasks").find({
                     scheduled_at: {
                         $gt: moment().add(-90, 'days').format('YYYY/MM/DD'),
                         $lt: moment().add(1, 'days').format('YYYY/MM/DD')
                     }
-                }).toArray();
-                data.all = await db.collection("tasks").find({}).toArray();
+                }).sort({scheduled_at: 1}).toArray();
+                data.all = await db.collection("tasks").find({}).sort({scheduled_at: 1}).toArray();
                 return res.json({ status: true, data: data });
             }else{
-                let tasks = await db.collection("tasks").find({}).toArray();
+                let tasks = await db.collection("tasks").find({}).sort({scheduled_at: 1}).toArray();
                 return res.json({ status: true, data: tasks });
             }
 
@@ -68,7 +65,7 @@ export default async function handler(req, res) {
                     {
                         $set: {
                             "type": "complete",
-                            "completed_at": new Date()
+                            "completed_at": moment().format("YYYY/MM/DD")
                         },
                     }
                 );

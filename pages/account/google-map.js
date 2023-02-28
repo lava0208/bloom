@@ -1,4 +1,5 @@
-import React, {useState} from 'react'
+/* eslint-disable react-hooks/rules-of-hooks */
+import React, {useEffect, useState} from 'react'
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 
 const containerStyle = {
@@ -17,8 +18,17 @@ function MyComponent(props) {
         googleMapsApiKey: "AIzaSyDZfVO29Iytspv4xz7S68doIoiztiRLhbk"
     })
 
+    const [position, setPosition] = useState({});
+
+    useEffect(() => {
+        if(Object.keys(props.currentLocation).length > 0){
+            setPosition(props.currentLocation)
+        }else{
+            setPosition(center)
+        }
+    }, [props.currentLocation])
+
     const [map, setMap] = useState(null)
-    const [position, setposition] = useState(center);
 
     const onLoad = React.useCallback(function callback(map) {
         const bounds = new window.google.maps.LatLngBounds(center);
@@ -36,8 +46,8 @@ function MyComponent(props) {
         location.lat = e.latLng.lat();
         location.lng = e.latLng.lng();
 
-        setposition(location);
-        props.getPosition(position)
+        setPosition(location);
+        props.getPosition(location)
     }
 
     return isLoaded ? (

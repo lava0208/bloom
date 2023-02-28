@@ -118,7 +118,7 @@ const List = () => {
                     {weekTasks.map((task, i) => (
                         <div className={styles.thisWeekTaskContainer} key={i}>
                             <h3>{task.title}</h3>
-                            <h4>{moment(task.date).format("dddd t\\h\\e Do")}</h4>
+                            <h4>{moment(task.scheduled_at).format("dddd t\\h\\e Do")}</h4>
                         </div>
                     ))}
                 </div>

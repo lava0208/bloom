@@ -124,7 +124,7 @@
 
 .plantOptionsContainer{
     display: grid;
-    grid-template-columns: auto auto auto;
+    grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
     padding: 1rem;
     .plantOptionRow{
@@ -237,6 +237,12 @@
     }
 }
 
+@media screen and (max-width: 1024px) {
+    .plantOptionsContainer{
+       grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 @media screen and (max-width: 576px) {
     .plantInfoContainer {
         display: block;
@@ -244,6 +250,10 @@
         .detailContainer,
         .taskContainer {
             width: 100%;
+            display: block;
         }
-    }    
+    }
+    .plantOptionsContainer{
+        grid-template-columns: 1fr;
+     }
 }

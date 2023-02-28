@@ -57,7 +57,7 @@ const UserSettings = (props) => {
                             onChange={(e) => {
                                 setUserSettings({
                                     ...userSettings,
-                                    last_frost: e,
+                                    last_frost: moment(e).format("YYYY/MM/DD"),
                                 });
                             }}
                         />
@@ -71,7 +71,7 @@ const UserSettings = (props) => {
                             onChange={(e) => {
                                 setUserSettings({
                                     ...userSettings,
-                                    first_frost: e,
+                                    first_frost: moment(e).format("YYYY/MM/DD"),
                                 });
                             }}
                         />

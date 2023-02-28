@@ -36,7 +36,6 @@ const ByPlantDetail = (props) => {
             }
             _taskArr.push(_taskObj)
         });
-        console.log(_taskArr);
         setTaskArr(_taskArr)
     }
 
@@ -60,7 +59,6 @@ const ByPlantDetail = (props) => {
         if(customTask.title === "" || customTask.scheduled_at === "" || customTask.duration === "" || customTask.note === ""){
             alert("Please fill all fields")
         }else{
-            setTaskArr(taskArr => [...taskArr, customTask])
             setCustomTask(
                 ...taskArr, {
                     planting_id: props.plantingId,
@@ -73,6 +71,7 @@ const ByPlantDetail = (props) => {
                     completed_at: ""
                 }
             )
+            setTaskArr(taskArr => [...taskArr, customTask])
         }
     }
 
@@ -134,7 +133,7 @@ const ByPlantDetail = (props) => {
                         onChange={(e) => {
                             setCustomTask({
                                 ...customTask,
-                                scheduled_at: e,
+                                scheduled_at: moment(e).format("YYYY/MM/DD"),
                             });
                         }}
                     />
