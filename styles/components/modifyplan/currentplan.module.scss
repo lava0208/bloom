@@ -26,6 +26,13 @@
     background: $blue;
     border-radius: 30px;
     flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    img{
+        max-width: 100%;
+        max-height: 100%;
+    }
 }
 
 .planInfoContainer {
@@ -61,6 +68,7 @@
     padding-top: 1rem;
     display: flex;
     flex-direction: column;
+    height: 100%;
 }
 
 .seedingRow,
@@ -189,7 +197,6 @@
     align-items: center;
     flex-direction: column;
     gap: 5px;
-    height: 100%;
     background-color: #9F9F9F;
 }
 
@@ -251,11 +258,17 @@
     }
     .planImage {
         height: 150px;
+        margin-bottom: 1rem;
     }
     .successionContainer {
         display: block;
     }
     .successionCheckboxesContainer {
         padding: 10px;
+    }
+    .seedingRow,
+    .quantityRow,
+    .harvestRow {
+        display: block;
     }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useState } from "react";
 import { userService, planService, plantService, plantingService } from "services";
 
@@ -98,7 +99,13 @@ const CurrentPlan = (props) => {
             </div>
             <div className={styles.currentPlanContainer}>
                 <div className={styles.planDetailsContainer}>
-                    <div className={styles.planImage}></div>
+                    <div className={styles.planImage}>
+                        {
+                            plant.image && (
+                                <img src={"/assets/upload/" + plant.image } alt="image" />
+                            )
+                        }
+                    </div>
                     <div className={styles.planInfoContainer}>
                         <h3>{plant.name}</h3>
                         <h4>{plant.species}</h4>
