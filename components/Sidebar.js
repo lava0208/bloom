@@ -44,10 +44,21 @@ const Sidebar = () => {
     const router = useRouter();
 
     const logout = () => {
-        if (confirm('Are you sure you want to logout?')) {
-            userService.removeUser();
-            router.push("/account/login")
-        }
+        swal({
+            title: "Wait!",
+            text: "Are you sure you want to logout?",
+            icon: "warning",
+            buttons: [
+                'No, cancel it!',
+                'Yes, I am sure!'
+            ],
+            dangerMode: true,
+        }).then(async function (isConfirm) {
+            if (isConfirm) {
+                userService.removeUser();
+                router.push("/account/login")
+            }
+        })
     }
 
     return (

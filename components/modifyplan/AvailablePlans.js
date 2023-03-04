@@ -51,7 +51,7 @@ const AvailablePlans = () => {
         <>
             <div className={styles.headerContainer}>
                 <h2>Available</h2>
-                <input className={styles.searchButton} placeholder={'Search'} onChange={(e) => setQuery(e.target.value)} />
+                <input className={styles.searchButton} placeholder={'Search'} onChange={(e) => setQuery((e.target.value).toLowerCase())} />
             </div>
             <div className={styles.plansContainer}>
                 {filteredArray.map((plant, i) => (

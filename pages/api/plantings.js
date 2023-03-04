@@ -23,8 +23,8 @@ function createTasks(planting, plant, plan){
     // let first_frost = plan.first_frost;
 
     //... durations
-    let _earliest_seed = plant.earliest_seed !== "" ? parseInt(plant.earliest_seed)*7 : 0;
-    let _latest_seed = plant.latest_seed !== "" ? parseInt(plant.latest_seed)*7 : 0;
+    let _earliest_indoor_seed = plant.earliest_seed !== "" ? parseInt(plant.earliest_seed)*7 : 0;
+    let _latest_indoor_seed = plant.latest_seed !== "" ? parseInt(plant.latest_seed)*7 : 0;
     let _cold_stratify = plant.cold_stratify !== "" ? parseInt(plant.cold_stratify)*7 : 0;
     let _pinch = plant.pinch !== "" ? parseInt(plant.pinch)*7 : 0;
     let _pot_on = plant.pot_on !== "" ? parseInt(plant.pot_on)*7 : 0;
@@ -38,45 +38,147 @@ function createTasks(planting, plant, plan){
     let pot_on_date = moment(last_frost).add(_pot_on, 'days').format('YYYY/MM/DD');
     let harvest_date = moment(last_frost).add(_maturity_early, 'days').format('YYYY/MM/DD');
     let seed_indoors_date;
+    let direct_seed_date;
     if(planting.direct_indoors){
         switch (planting.harvest) {
             case "Early":
-                seed_indoors_date = moment(last_frost).subtract(_earliest_seed, 'days').format('YYYY/MM/DD');
+                seed_indoors_date = moment(last_frost).subtract(_earliest_indoor_seed, 'days').format('YYYY/MM/DD');
                 break;
             case "Regular":
-                seed_indoors_date = moment(last_frost).subtract((_earliest_seed + _latest_seed)/2, 'days').format('YYYY/MM/DD');
+                seed_indoors_date = moment(last_frost).subtract((_earliest_indoor_seed + _latest_indoor_seed)/2, 'days').format('YYYY/MM/DD');
                 break;
             default:
-                seed_indoors_date = moment(last_frost).subtract(_latest_seed, 'days').format('YYYY/MM/DD');
+                seed_indoors_date = moment(last_frost).subtract(_latest_indoor_seed, 'days').format('YYYY/MM/DD');
                 break;
         }
     }else{
-        seed_indoors_date = moment(last_frost).add(_direct_sow, 'days').format('YYYY/MM/DD');
+        direct_seed_date = moment(last_frost).add(_direct_sow, 'days').format('YYYY/MM/DD');
     }
     let harden_date = moment(last_frost).add(_harden, 'days').format('YYYY/MM/DD');
     let pinch_date = moment(last_frost).add(_pinch, 'days').format('YYYY/MM/DD');
     let transplant_date = moment(last_frost).add(_transplant, 'days').format('YYYY/MM/DD');
-    
-    var titleArr = ['Cold Stratify', 'Pot On', 'Harvest', 'Seed Indoors', 'Harden', 'Pinch', 'Transplant'];
-    var noteArr = ['', plant.pot_on_note, plant.harvest_note, plant.indoor_seed_note, '', plant.pinch_note, plant.transplant_note];
-    var durationArr = [7, 7, 1, 7, 7, 7, 7];
-    var scheduleArr = [cold_stratify_date, pot_on_date, harvest_date, seed_indoors_date, harden_date, pinch_date, transplant_date]
 
     var taskArr = [];
 
-    for (var i=0; i<7; i++){
-        var taskObj = {
-            planting_id: planting._id,
-            title: titleArr[i],
-            scheduled_at: scheduleArr[i],
-            duration: durationArr[i],
-            note: noteArr[i],
-            type: "incomplete",
-            rescheduled_at: "",
-            completed_at: ""
+    //... Enable Direct Sow
+    if(planting.direct_sow === true && planting.direct_indoors === false ){
+        var titleArr1 = ['Direct Seed/Sow', 'Harvest'];
+        var noteArr1 = [plant.direct_seed_note, plant.harvest_note];
+        var durationArr1 = [7, 1];
+        var scheduleArr1 = [direct_seed_date, harvest_date];
+
+        if(_cold_stratify != 0){
+            titleArr1.push('Cold Stratify');
+            noteArr1.push('');
+            durationArr1.push(7);
+            scheduleArr1.push(cold_stratify_date);
         }
-        taskArr.push(taskObj);
+    
+        for (var i=0; i<titleArr1.length; i++){
+            var taskObj = {
+                planting_id: planting._id,
+                title: titleArr1[i],
+                scheduled_at: scheduleArr1[i],
+                duration: durationArr1[i],
+                note: noteArr1[i],
+                type: "incomplete",
+                rescheduled_at: "",
+                completed_at: ""
+            }
+            taskArr.push(taskObj);
+        }
+    //... Enable Start Indoors
+    }else if(planting.direct_sow === false && planting.direct_indoors === true ){
+        var titleArr2 = ['Seed Indoors', 'Harden', 'Transplant'];
+        var noteArr2 = [plant.indoor_seed_note, '', plant.transplant_note];
+        var durationArr2 = [7, 7, 7];
+        var scheduleArr2 = [seed_indoors_date, harden_date, transplant_date];
+
+        if(_cold_stratify != 0){
+            titleArr2.push('Cold Stratify');
+            noteArr2.push('');
+            durationArr2.push(7);
+            scheduleArr2.push(cold_stratify_date);
+        }
+
+        if(planting.pinch && planting.pot_on){
+            if(planting.pinch === true && planting.pot_on === false){
+                titleArr2.push('Pinch');
+                noteArr2.push(plant.pinch_note);
+                durationArr2.push(7);
+                scheduleArr2.push(pinch_date);
+            }else if(planting.pinch === false && planting.pot_on === true){
+                titleArr2.push('Pot On');
+                noteArr2.push(plant.pot_on_note);
+                durationArr2.push(7);
+                scheduleArr2.push(pot_on_date);
+            }else{
+                titleArr2.push('Pinch', 'Pot On');
+                noteArr2.push(plant.pinch_note, plant.pot_on_note);
+                durationArr2.push(7, 7);
+                scheduleArr2.push(pinch_date, pot_on_date);
+            }
+        }
+        for (var i=0; i<titleArr2.length; i++){
+            var taskObj = {
+                planting_id: planting._id,
+                title: titleArr2[i],
+                scheduled_at: scheduleArr2[i],
+                duration: durationArr2[i],
+                note: noteArr2[i],
+                type: "incomplete",
+                rescheduled_at: "",
+                completed_at: ""
+            }
+            taskArr.push(taskObj);
+        }
+    }else{
+        var titleArr3 = ['Direct Seed/Sow', 'Harvest', 'Seed Indoors', 'Harden', 'Transplant'];
+        var noteArr3 = [plant.direct_seed_note, plant.harvest_note, plant.indoor_seed_note, '', plant.transplant_note];
+        var durationArr3 = [7, 1, 7, 7, 7];
+        var scheduleArr3 = [direct_seed_date, harvest_date, seed_indoors_date, harden_date, transplant_date];
+
+        if(_cold_stratify != 0){
+            titleArr3.push('Cold Stratify');
+            noteArr3.push('');
+            durationArr3.push(7);
+            scheduleArr3.push(cold_stratify_date);
+        }
+
+        if(planting.pinch && planting.pot_on){
+            if(planting.pinch === true && planting.pot_on === false){
+                titleArr3.push('Pinch');
+                noteArr3.push(plant.pinch_note);
+                durationArr3.push(7);
+                scheduleArr3.push(pinch_date);
+            }else if(planting.pinch === false && planting.pot_on === true){
+                titleArr3.push('Pot On');
+                noteArr3.push(plant.pot_on_note);
+                durationArr3.push(7);
+                scheduleArr3.push(pot_on_date);
+            }else{
+                titleArr3.push('Pinch', 'Pot On');
+                noteArr3.push(plant.pinch_note, plant.pot_on_note);
+                durationArr3.push(7, 7);
+                scheduleArr3.push(pinch_date, pot_on_date);
+            }
+        }
+
+        for (var i=0; i<titleArr3.length; i++){
+            var taskObj = {
+                planting_id: planting._id,
+                title: titleArr3[i],
+                scheduled_at: scheduleArr3[i],
+                duration: durationArr3[i],
+                note: noteArr3[i],
+                type: "incomplete",
+                rescheduled_at: "",
+                completed_at: ""
+            }
+            taskArr.push(taskObj);
+        }
     }
+    
     return taskArr;
 }
 
@@ -132,9 +234,10 @@ export default async function handler(req, res) {
                 },
                 {
                     $set: {
-                        seeds: req.body.seeds,
+                        seeds: parseInt(req.body.seeds),
                         harvest: req.body.harvest,
                         direct_sow: req.body.direct_sow,
+                        direct_indoors: req.body.direct_indoors,
                         pinch: req.body.pinch,
                         pot_on: req.body.pot_on,
                         spacing: req.body.spacing,
@@ -142,7 +245,6 @@ export default async function handler(req, res) {
                     },
                 }
             );
-            
             //... insert automatic tasks
             let _plant = await getPlantById(req.body.plant_id);
             let _plan = await getPlanById(req.body.plan_id);

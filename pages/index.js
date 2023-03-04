@@ -25,7 +25,7 @@ const Dashboard = () => {
 
     const [todayTasks, setTodayTasks] = useState([]);
     const [tomorrowTasks, setTomorrowTasks] = useState([]);
-    const [seasonTasks, setSeasonTasks] = useState([]);
+    const [seasonTasks, setSeasonTasks] = useState({});
     const [overdueTasks, setOverdueTasks] = useState([]);
     const [nextWeekTasks, setNextWeekTasks] = useState([]);
 
@@ -36,7 +36,6 @@ const Dashboard = () => {
         setSeasonTasks(_result.data.season);
         setOverdueTasks(_result.data.overdue);
         setNextWeekTasks(_result.data.nextweek);
-        console.log(nextWeekTasks);
     }
 
     return (
@@ -74,7 +73,7 @@ const Dashboard = () => {
                         <h3>OVERDUE TASKS</h3>
                     </div>
                     <div className={`${styles.statContainer} ${styles.wide}`}>
-                        <h2>{seasonTasks.length}</h2>
+                        <h2>{seasonTasks && seasonTasks.length > 0 ? seasonTasks[0].sum : 0}</h2>
                         <h3>PLANTS THIS SEASON</h3>
                     </div>
                 </div>

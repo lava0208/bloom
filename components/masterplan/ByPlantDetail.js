@@ -11,7 +11,7 @@ import styles from "~styles/components/masterplan/byplantdetail.module.scss";
 const ByPlantDetail = (props) => {
     const [taskArr, setTaskArr] = useState([]);
 
-    useEffect(() => {        
+    useEffect(() => {
         getPlantAndTasks();
     }, [])
 
@@ -39,7 +39,7 @@ const ByPlantDetail = (props) => {
         setTaskArr(_taskArr)
     }
 
-    const dateFormat = (date) =>{
+    const dateFormat = (date) => {
         return moment(date).format("YYYY/MM/DD")
     }
 
@@ -54,41 +54,77 @@ const ByPlantDetail = (props) => {
         completed_at: ""
     });
 
-    
+
     const addCustomTask = () => {
-        if(customTask.title === "" || customTask.scheduled_at === "" || customTask.duration === "" || customTask.note === ""){
-            alert("Please fill all fields")
-        }else{
+        if (customTask.title === "" || customTask.scheduled_at === "" || customTask.duration === "" || customTask.note === "") {
+            swal({
+                title: "Warning!",
+                text: "Please fill all fields",
+                icon: "warning",
+            });
+        } else {
             setCustomTask(
                 ...taskArr, {
-                    planting_id: props.plantingId,
-                    title: "",
-                    scheduled_at: moment().format('YYYY/MM/DD'),
-                    duration: "",
-                    note: "",
-                    type: "incomplete",
-                    rescheduled_at: "",
-                    completed_at: ""
-                }
+                planting_id: props.plantingId,
+                title: "",
+                scheduled_at: moment().format('YYYY/MM/DD'),
+                duration: "",
+                note: "",
+                type: "incomplete",
+                rescheduled_at: "",
+                completed_at: ""
+            }
             )
             setTaskArr(taskArr => [...taskArr, customTask])
         }
     }
 
     const save = async () => {
-        if (confirm('Are you sure you want to update?')) {
-            var _result = await taskService.update(props.plantingId, taskArr);
-            alert(_result.message);
-            props.close();
-        }
+        swal({
+            title: "Wait!",
+            text: "Are you sure you want to update?",
+            icon: "info",
+            buttons: [
+                'No, cancel it!',
+                'Yes, I am sure!'
+            ],
+            dangerMode: true,
+        }).then(async function (isConfirm) {
+            if (isConfirm) {
+                var _result = await taskService.update(props.plantingId, taskArr);
+                swal({
+                    title: "Success!",
+                    text: _result.message,
+                    icon: "success",
+                }).then(function(){
+                    props.close();
+                });
+            }
+        })
     }
 
     const deleteTask = async (id) => {
-        if (confirm('Are you sure you want to delete?')) {
-            var _result = await taskService.delete(id);
-            alert(_result.message);
-            props.close();
-        }
+        swal({
+            title: "Wait!",
+            text: "Are you sure you want to delete?",
+            icon: "warning",
+            buttons: [
+                'No, cancel it!',
+                'Yes, I am sure!'
+            ],
+            dangerMode: true,
+        }).then(async function (isConfirm) {
+            if (isConfirm) {
+                var _result = await taskService.delete(id);
+                swal({
+                    title: "Success!",
+                    text: _result.message,
+                    icon: "success",
+                }).then(function(){
+                    props.close();
+                });
+            }
+        })
     }
 
     return (
@@ -102,7 +138,7 @@ const ByPlantDetail = (props) => {
                     <div className={styles.detailImage}>
                         {
                             plant.image && (
-                                <img src={"/assets/upload/" + plant.image } alt="image" />
+                                <img src={"/assets/upload/" + plant.image} alt="image" />
                             )
                         }
                     </div>
@@ -176,7 +212,7 @@ const ByPlantDetail = (props) => {
                             <button>{moment(task.scheduled_at).format("MMMM DD, YYYY")}</button>
                         </div>
                         <div className={styles.plantOptionsFooter}>
-                            <select 
+                            <select
                                 value={task.type}
                                 onChange={(e) => {
                                     let _taskArr = [...taskArr];

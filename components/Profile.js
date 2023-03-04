@@ -21,7 +21,6 @@ const Profile = () => {
     const [isPro, setIsPro] = useState(false);
 
     const [originPassword, setOriginPassword] = useState("");
-    const [errMsg, setErrMsg] = useState("");
 
     const [uploading, setUploading] = useState(false);
     const [selectedImage, setSelectedImage] = useState("");
@@ -63,20 +62,35 @@ const Profile = () => {
     const updateUser = async () => {
         const result = await userService.update(userService.getId(), user);
         if(result.status === true){
-            alert(result.message)
+            swal({
+                title: "Success!",
+                text: result.message,
+                icon: "success",
+            });
         }else{
-            setErrorText(result.message)
+            swal({
+                title: "Error!",
+                text: result.message,
+                icon: "error",
+            });
         }
     }
     
     const saveUser = () => {
         bcrypt.compare(user.password, originPassword, async function (err, isMatch) {
             if (err, user.password === "") {
-                setErrMsg("Fill all fields");
+                swal({
+                    title: "Error!",
+                    text: "Fill all fields",
+                    icon: "error",
+                });
             } else if (!isMatch) {
-                setErrMsg("Use correct password.");
+                swal({
+                    title: "Error!",
+                    text: "Use correct password",
+                    icon: "error",
+                });
             } else {
-                setErrMsg(" ");
                 if (selectedFile){
                     handleUpload().then(function(){
                         updateUser()
@@ -89,12 +103,23 @@ const Profile = () => {
     }
 
     const deleteUser = async () => {
-        if (confirm('Are you sure you want to close this account?')) {
-            await userService.delete(userService.getId());
-            localStorage.removeItem("user");
-            localStorage.removeItem("userid");
-            router.push("/account/register");
-        }
+        swal({
+            title: "Wait!",
+            text: "Are you sure you want to close this account?",
+            icon: "warning",
+            buttons: [
+                'No, cancel it!',
+                'Yes, I am sure!'
+            ],
+            dangerMode: true,
+        }).then(async function (isConfirm) {
+            if (isConfirm) {
+                await userService.delete(userService.getId());
+                localStorage.removeItem("user");
+                localStorage.removeItem("userid");
+                router.push("/account/register");
+            }
+        })
     }
 
     return (<>
@@ -146,11 +171,6 @@ const Profile = () => {
                             setUser({ ...user, password: e.target.value })
                         }
                     />
-                    { 
-                        errMsg && (
-                            <p className={styles.errorText}>{errMsg}</p>
-                        )
-                    }
                     <button className={styles.button1} onClick={() => saveUser()}>Save Changes</button>
                 </div>
                 <div className={styles.preferenceContainer}>

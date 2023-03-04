@@ -10,15 +10,15 @@ const Login = () => {
         email: "",
         password: ""
     });
-    const [error, setError] = useState(false);
-    const [errorText, setErrorText] = useState("");
-
     const router = useRouter();
     const emailValidation = () => {
         const regex = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
         if (regex.test(user.email) === false) {
-            setError(true);
-            setErrorText("Email is not valid");
+            swal({
+                title: "Login Error!",
+                text: "Email is not valid",
+                icon: "error",
+            });
             return false;
         }
         return true;
@@ -32,13 +32,19 @@ const Login = () => {
                     await userService.setId(result.data[0]._id);
                     router.push("/")
                 }else{
-                    setError(true);
-                    setErrorText(result.message)
+                    swal({
+                        title: "Login Error!",
+                        text: result.message,
+                        icon: "error",
+                    });
                 }
             }
         } else {
-            setError(true);
-            setErrorText("Please fill all fields.");
+            swal({
+                title: "Login Error!",
+                text: "Please fill all fields",
+                icon: "error",
+            });
         }
     }
 
@@ -77,11 +83,6 @@ const Login = () => {
                         });
                     }}
                 />
-                {
-                    error && (
-                        <p className={styles.errorText}>{errorText}</p>
-                    )
-                }
                 <h4><a onClick={() => router.push('/account/register')}>Click here </a> to register a new account.</h4>
             </div>
 

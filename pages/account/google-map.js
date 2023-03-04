@@ -21,10 +21,12 @@ function MyComponent(props) {
     const [position, setPosition] = useState({});
 
     useEffect(() => {
-        if(Object.keys(props.currentLocation).length > 0){
-            setPosition(props.currentLocation)
-        }else{
-            setPosition(center)
+        if(props && props.currentLocation){
+            if(Object.keys(props.currentLocation).length > 0){
+                setPosition(props.currentLocation)
+            }else{
+                setPosition(center)
+            }
         }
     }, [props.currentLocation])
 

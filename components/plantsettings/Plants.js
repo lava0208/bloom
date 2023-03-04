@@ -60,10 +60,21 @@ const Plants = () => {
     }
 
     const deletePlant = async (id) => {
-        if (confirm('Are you sure you want to delete this plan?')) {
-            await plantService.delete(id);
-            getOriginalArray();
-        }
+        swal({
+            title: "Wait!",
+            text: "Are you sure you want to delete this plan?",
+            icon: "warning",
+            buttons: [
+                'No, cancel it!',
+                'Yes, I am sure!'
+            ],
+            dangerMode: true,
+        }).then(async function (isConfirm) {
+            if (isConfirm) {
+                await plantService.delete(id);
+                getOriginalArray();;
+            }
+        })
     }
 
     return (
@@ -72,7 +83,7 @@ const Plants = () => {
                 <div className={styles.addCustomContainer} onClick={() => openModal("create")}>
                     <button>Add New Custom</button>
                 </div>
-                <input className={styles.searchButton} placeholder={'Search'} onChange={(e) => setQuery(e.target.value)} />
+                <input className={styles.searchButton} placeholder={'Search'} onChange={(e) => setQuery((e.target.value).toLowerCase())} />
             </div>
             <div className={styles.plantsContainer}>
                 {filteredArray.map((plant, i) => (

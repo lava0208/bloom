@@ -15,7 +15,11 @@ const List = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const completeTask = async (id) => {
         var _result = await taskService.updateByStatus(id);
-        alert(_result.message);
+        swal({
+            title: "Success!",
+            text: _result.message,
+            icon: "success",
+        });
         setModalOpen(false);
         getAllTasks();
     }

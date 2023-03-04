@@ -15,15 +15,15 @@ const Register = () => {
         profile_path: ""
     });
 
-    const [error, setError] = useState(false);
-    const [errorText, setErrorText] = useState("");
-
     const router = useRouter();
     const emailValidation = () => {
         const regex = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
         if (regex.test(user.email) === false) {
-            setError(true);
-            setErrorText("Email is not valid");
+            swal({
+                title: "Register Error!",
+                text: "Email is not valid",
+                icon: "error",
+            });
             return false;
         }
         return true;
@@ -56,12 +56,19 @@ const Register = () => {
     const registerUser = async () => {
         const result = await userService.register(user);
         if (result.status === true) {
-            alert(result.message);
+            swal({
+                title: "Register Success!",
+                text: result.message,
+                icon: "success",
+            });
             await userService.setId(result.data.insertedId);
             router.push("/account/plan")
         } else {
-            setError(true);
-            setErrorText(result.message)
+            swal({
+                title: "Register Error!",
+                text: result.message,
+                icon: "error",
+            });
         }
     }
 
@@ -77,8 +84,11 @@ const Register = () => {
                 }
             }
         } else {
-            setError(true);
-            setErrorText("Please fill all fields.");
+            swal({
+                title: "Register Error!",
+                text: "Please fill all fields.",
+                icon: "error",
+            });
         }
     }
 
@@ -148,11 +158,6 @@ const Register = () => {
                         });
                     }}
                 />
-                {
-                    error && (
-                        <p className={styles.errorText}>{errorText}</p>
-                    )
-                }
                 <h4><a onClick={() => router.push('/account/login')}>Click here </a> to login.</h4>
             </div>
 

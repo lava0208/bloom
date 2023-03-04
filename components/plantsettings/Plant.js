@@ -34,8 +34,6 @@ const Plant = (props) => {
         transplant_note: "",
         harvest_note: "",
     });
-    const [error, setError] = useState(false);
-    const [errorText, setErrorText] = useState("");
 
     useEffect(() => {
         getPlant(props.id)
@@ -74,15 +72,23 @@ const Plant = (props) => {
 
     const uploadPlant = async () => {
         if(props.id === 0){
-            const result = await plantService.create(plant);
-            if(result.status === true){
-                alert(result.message);
+            const _result = await plantService.create(plant);
+            if(_result.status === true){
+                swal({
+                    title: "Success!",
+                    text: _result.message,
+                    icon: "success",
+                });
                 props.savePlant()
             }
         }else{
-            const result = await plantService.update(props.id, plant);
-            if(result.status === true){
-                alert(result.message);
+            const _result = await plantService.update(props.id, plant);
+            if(_result.status === true){
+                swal({
+                    title: "Success!",
+                    text: _result.message,
+                    icon: "success",
+                });
                 props.savePlant()
             }
         }
@@ -99,8 +105,11 @@ const Plant = (props) => {
                 uploadPlant()
             }                      
         } else {
-            setError(true);
-            setErrorText("Please fill all fields.");
+            swal({
+                title: "Warning!",
+                text: "Please fill all fields.",
+                icon: "warning",
+            });
         }
     }
 
@@ -413,11 +422,6 @@ const Plant = (props) => {
                     />
                 </div>
                 <div className={styles.inputContainer + " text-center"}>
-                    {
-                        error && (
-                            <p className={styles.errorText}>{errorText}</p>
-                        )
-                    }
                     <button onClick={() => { savePlant() }}>Save Changes</button>
                     <button onClick={props.cancelPlant}>Cancel</button>
                 </div>

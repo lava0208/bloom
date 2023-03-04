@@ -35,12 +35,27 @@ const UserSettings = (props) => {
     }
 
     const saveSetting = async () => {
-        if (confirm('Do you want to update your plan?')) {
-            const result = await planService.update(userService.getId(), userSettings);
-            if(result.status === true){
-                props.closePlanSettingsModal();
+        swal({
+            title: "Wait!",
+            text: "Are you sure you want to update your plan?",
+            icon: "info",
+            buttons: [
+                'No, cancel it!',
+                'Yes, I am sure!'
+            ],
+            dangerMode: true,
+        }).then(async function (isConfirm) {
+            if (isConfirm) {
+                var _result = await planService.update(userService.getId(), userSettings);
+                swal({
+                    title: "Success!",
+                    text: _result.message,
+                    icon: "success",
+                }).then(function(){
+                    props.closePlanSettingsModal();
+                });
             }
-        }
+        })
     }
 
     return (

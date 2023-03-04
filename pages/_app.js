@@ -2,6 +2,7 @@ import "../styles/globals.scss";
 import "~styles/bigcalendar.scss";
 import "weather-icons/css/weather-icons.css";
 import PageHead from "~components/PageHead";
+import swal from 'sweetalert';
 
 function MyApp({ Component, pageProps }) {
   return (

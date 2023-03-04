@@ -28,11 +28,22 @@ const YourPlan = () => {
         setPlanEditModalOpen(false);
     }
     const deletePlanting = async (id) => {
-        if (confirm('Are you sure you want to delete this plan?')) {
-            await taskService.deleteByPlantingId(id);
-            await plantingService.delete(id);
-            getAllPlantings();
-        }
+        swal({
+            title: "Wait!",
+            text: "Are you sure you want to delete this plan?",
+            icon: "warning",
+            buttons: [
+                'No, cancel it!',
+                'Yes, I am sure!'
+            ],
+            dangerMode: true,
+        }).then(async function (isConfirm) {
+            if (isConfirm) {
+                await taskService.deleteByPlantingId(id);
+                await plantingService.delete(id);
+                getAllPlantings();
+            }
+        })
     }
 
     useEffect(() => {

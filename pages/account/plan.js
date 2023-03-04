@@ -17,22 +17,34 @@ const Plan = () => {
         last_frost: new Date(),
         first_frost: new Date()
     });
-    const [error, setError] = useState(false);
 
     const router = useRouter();
 
     const register = async () => {
         if (plan.name !== "" && plan.size !== "") {
             plan.userid = userService.getId();
-            const result = await planService.create(plan)
-            if (result.status === true) {
-                alert(result.message);
-                router.push("/account/payment")
+            const _result = await planService.create(plan)
+            if (_result.status === true) {
+                swal({
+                    title: "Success!",
+                    text: _result.message,
+                    icon: "success",
+                }).then(function(){
+                    router.push("/account/payment")
+                });                
             } else {
-                setError(true);
+                swal({
+                    title: "Error!",
+                    text: _result.message,
+                    icon: "error",
+                })
             }
         } else {
-            setError(true);
+            swal({
+                title: "Success!",
+                text: "Please fill all fields",
+                icon: "success",
+            })
         }
     }
 
@@ -114,13 +126,6 @@ const Plan = () => {
                         });
                     }}
                 />
-
-                {
-                    error && (
-                        <p className={styles.errorText}>Please fill all fields.</p>
-                    )
-                }
-
             </div>
 
             <div

@@ -25,6 +25,10 @@ const ByPlant = () => {
         setPlantingEditModalOpen(false);
     }
 
+    const [origialArray, setOrigialArray] = useState([]);
+    const [query, setQuery] = useState('');
+    const [filteredArray, setFilteredArray] = useState([]);
+
     useEffect(() => {
         getAllPlantings();
     }, [])
@@ -32,6 +36,20 @@ const ByPlant = () => {
     const getAllPlantings = async () => {
         var _result = await plantingService.getAll();
         setPlantings(_result.data);
+        setOrigialArray(_result.data)
+        setFilteredArray(_result.data)
+    }
+
+    useEffect(() => {
+        refreshFilterdArray();
+    }, [query])
+
+    const refreshFilterdArray = async () => {
+        var _filteredArray =  origialArray.filter(
+            (el) => el.name.toLowerCase().includes(query)
+        )      
+
+        setFilteredArray(_filteredArray)
     }
    
     const close = () => {
@@ -42,10 +60,10 @@ const ByPlant = () => {
         <div className={styles.container}>
             <div className={styles.headerContainer}>
                 <h2>2023 Plan Plantings</h2>
-                <input className={styles.searchButton} placeholder={'Search'} />
+                <input className={styles.searchButton} placeholder={'Search'} onChange={(e) => setQuery((e.target.value).toLowerCase())} />
             </div>
             <div className={styles.plantsContainer}>
-                {plantings.map((planting, i) => (
+                {filteredArray.map((planting, i) => (
                     <div className={styles.plantContainer} key={i}>
                         <div className={styles.plantImage}>
                             {

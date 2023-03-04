@@ -38,16 +38,11 @@ export default async function handler(req, res) {
                 }).sort({scheduled_at: 1}).toArray();
                 data.overdue = await db.collection("tasks").find({
                     scheduled_at: {
-                        $gt: moment("2023/01/01").format('YYYY/MM/DD'),
+                        $gt: moment("2023/01/01", "YYYY/MM/DD"),
                         $lt: moment().format('YYYY/MM/DD')
                     }
                 }).sort({scheduled_at: 1}).toArray();
-                data.season = await db.collection("tasks").find({
-                    scheduled_at: {
-                        $gt: moment().add(-90, 'days').format('YYYY/MM/DD'),
-                        $lt: moment().add(1, 'days').format('YYYY/MM/DD')
-                    }
-                }).sort({scheduled_at: 1}).toArray();
+                data.season = await db.collection("plantings").aggregate([{ $group:{ _id : null, sum : { $sum: "$seeds" } }}]).toArray();
                 data.all = await db.collection("tasks").find({}).sort({scheduled_at: 1}).toArray();
                 return res.json({ status: true, data: data });
             }else{
