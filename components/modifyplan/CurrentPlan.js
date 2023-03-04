@@ -8,9 +8,11 @@ const CurrentPlan = (props) => {
     //... Initialize
     const [pinchCheckbox, setPinchCheckbox] = useState(false);
     const [potCheckbox, setPotCheckbox] = useState(false);
-    const [directSeed, setDirectSeed] = useState(false);
-    const [startIndoors, setStartIndoors] = useState(false);
-
+    const seeds = [
+        { label: "Direct Sow", value: 1 },
+        { label: "Direct Indoors", value: 2 }
+    ]
+    const [activeSeed, setActiveSeed] = useState(-1);
     const harvests = [
         { label: "Early", value: 1 },
         { label: "Regular", value: 2 },
@@ -37,8 +39,7 @@ const CurrentPlan = (props) => {
             getPlanting();
             setPinchCheckbox(props.planting.pinch);
             setPotCheckbox(props.planting.pot_on);
-            setDirectSeed(props.planting.direct_sow);
-            setStartIndoors(props.planting.direct_indoors);
+            setActiveSeed(props.planting.direct_sow ? 1 : 2);
             var _harvest = harvests.find(x => x.label === props.planting.harvest)
             setActiveHarvest(_harvest ? _harvest.value : -1);
         }else{
@@ -50,6 +51,7 @@ const CurrentPlan = (props) => {
     //... get plan nand planting
     const [plant, setPlant] = useState({});
     const getPlantAndPlanting = async () => {
+        console.log(userService.getId());
         var _plan = await planService.getByUserId(userService.getId());
         var _plant = await plantService.getById(props.plantId);
         var _planting = { ...planting };
@@ -67,59 +69,51 @@ const CurrentPlan = (props) => {
     }
 
     const save = async () => {
-        if(!directSeed && !startIndoors){
+        if(props.planting !== undefined){
             swal({
-                title: "Warning!",
-                text: "Please choose seeding",
-                icon: "warning",
+                title: "Wait!",
+                text: "Are you sure you want to update?",
+                icon: "info",
+                buttons: [
+                    'No, cancel it!',
+                    'Yes, I am sure!'
+                ],
+                dangerMode: true,
+            }).then(async function (isConfirm) {
+                if (isConfirm) {
+                    var _result = await plantingService.update(props.planting._id , planting);
+                    swal({
+                        title: "Success!",
+                        text: _result.message,
+                        icon: "success",
+                    }).then(function(){
+                        props.savePlanting();
+                    });
+                }
             })
         }else{
-            if(props.planting !== undefined){
-                swal({
-                    title: "Wait!",
-                    text: "Are you sure you want to update?",
-                    icon: "info",
-                    buttons: [
-                        'No, cancel it!',
-                        'Yes, I am sure!'
-                    ],
-                    dangerMode: true,
-                }).then(async function (isConfirm) {
-                    if (isConfirm) {
-                        var _result = await plantingService.update(props.planting._id , planting);
-                        swal({
-                            title: "Success!",
-                            text: _result.message,
-                            icon: "success",
-                        }).then(function(){
-                            props.savePlanting();
-                        });
-                    }
-                })
-            }else{
-                swal({
-                    title: "Wait!",
-                    text: "Are you sure you want to create?",
-                    icon: "info",
-                    buttons: [
-                        'No, cancel it!',
-                        'Yes, I am sure!'
-                    ],
-                    dangerMode: true,
-                }).then(async function (isConfirm) {
-                    if (isConfirm) {
-                        var _result = await plantingService.create(planting);
-                        swal({
-                            title: "Success!",
-                            text: _result.message,
-                            icon: "success",
-                        }).then(function(){
-                            props.savePlanting();
-                        });
-                    }
-                })
-            }
-        }        
+            swal({
+                title: "Wait!",
+                text: "Are you sure you want to create?",
+                icon: "info",
+                buttons: [
+                    'No, cancel it!',
+                    'Yes, I am sure!'
+                ],
+                dangerMode: true,
+            }).then(async function (isConfirm) {
+                if (isConfirm) {
+                    var _result = await plantingService.create(planting);
+                    swal({
+                        title: "Success!",
+                        text: _result.message,
+                        icon: "success",
+                    }).then(function(){
+                        props.savePlanting();
+                    });
+                }
+            })
+        }
     }
 
     const reset = () => {
@@ -158,24 +152,19 @@ const CurrentPlan = (props) => {
                 <div className={styles.planOptionsContainer}>
                     <div className={styles.seedingRow}>
                         <h4>Seeding</h4>
-                        <button
-                            onClick={() => {setDirectSeed(!directSeed), setPlanting({...planting, direct_sow: !directSeed})}}
-                            className={planting.direct_sow === true ?  styles.selected : ''}
-                            value={planting.direct_sow}
-                        >
-                            Direct Sow
-                        </button>
-                        <button
-                            onClick={() => {setStartIndoors(!startIndoors), setPlanting({...planting, direct_indoors: !startIndoors})}}
-                            className={planting.direct_indoors === true ?  styles.selected : ''}
-                            value={planting.direct_indoors}
-                        >
-                            Start Indoors
-                        </button>
+                        {seeds.map((element, i) => (
+                            <button key={i} 
+                                onClick={() => {setActiveSeed(element.value), setPlanting({...planting, direct_sow: element.value === 1 ? true : false, direct_indoors: element.value === 1 ? false : true})}}
+                                className={activeSeed === i + 1 ?  styles.selected : ''}
+                                value={planting.direct_sow}
+                            >
+                                {element.label}
+                            </button>
+                        ))}
                     </div>
                     <div className={styles.quantityRow}>
                         <h4>Quantity</h4>
-                        <input type="number" placeholder="# of seeds" value={planting.seeds} onChange={(e) => setPlanting({...planting, seeds: e.target.value})} />
+                        <input type="number" placeholder="# of seeds" value={planting.seeds === null ? 0 : parseInt(planting.seeds)} onChange={(e) => setPlanting({...planting, seeds: parseInt(e.target.value) })} />
                     </div>
                     <div className={styles.harvestRow}>
                         <h4>Harvest</h4>
@@ -197,11 +186,11 @@ const CurrentPlan = (props) => {
                             </div>
                             <div className={styles.successionButtonsContainer}>
                                 <div>
-                                    <input type="text" value={planting.succession} onChange={(e) => setPlanting({...planting, succession: e.target.value})} /> 
+                                    <input value={planting.succession} onChange={(e) => setPlanting({...planting, succession: e.target.value})} /> 
                                     <span>Plantings</span>
                                 </div>
                                 <div>
-                                    <input type="text" value={planting.spacing} onChange={(e) => setPlanting({...planting, spacing: e.target.value})} />
+                                    <input value={planting.spacing} onChange={(e) => setPlanting({...planting, spacing: e.target.value})} />
                                     <span>Days Between</span>
                                 </div>
                             </div>

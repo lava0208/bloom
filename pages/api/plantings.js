@@ -61,7 +61,7 @@ function createTasks(planting, plant, plan){
     var taskArr = [];
 
     //... Enable Direct Sow
-    if(planting.direct_sow === true && planting.direct_indoors === false ){
+    if(planting.direct_sow){
         var titleArr1 = ['Direct Seed/Sow', 'Harvest'];
         var noteArr1 = [plant.direct_seed_note, plant.harvest_note];
         var durationArr1 = [7, 1];
@@ -72,6 +72,12 @@ function createTasks(planting, plant, plan){
             noteArr1.push('');
             durationArr1.push(7);
             scheduleArr1.push(cold_stratify_date);
+        }
+        if(_pinch != 0){
+            titleArr1.push('Pinch');
+            noteArr1.push(plant.pinch_note);
+            durationArr1.push(7);
+            scheduleArr1.push(pinch_date);
         }
     
         for (var i=0; i<titleArr1.length; i++){
@@ -88,7 +94,7 @@ function createTasks(planting, plant, plan){
             taskArr.push(taskObj);
         }
     //... Enable Start Indoors
-    }else if(planting.direct_sow === false && planting.direct_indoors === true ){
+    }else{
         var titleArr2 = ['Seed Indoors', 'Harden', 'Transplant'];
         var noteArr2 = [plant.indoor_seed_note, '', plant.transplant_note];
         var durationArr2 = [7, 7, 7];
@@ -100,25 +106,19 @@ function createTasks(planting, plant, plan){
             durationArr2.push(7);
             scheduleArr2.push(cold_stratify_date);
         }
-
-        if(planting.pinch && planting.pot_on){
-            if(planting.pinch === true && planting.pot_on === false){
-                titleArr2.push('Pinch');
-                noteArr2.push(plant.pinch_note);
-                durationArr2.push(7);
-                scheduleArr2.push(pinch_date);
-            }else if(planting.pinch === false && planting.pot_on === true){
-                titleArr2.push('Pot On');
-                noteArr2.push(plant.pot_on_note);
-                durationArr2.push(7);
-                scheduleArr2.push(pot_on_date);
-            }else{
-                titleArr2.push('Pinch', 'Pot On');
-                noteArr2.push(plant.pinch_note, plant.pot_on_note);
-                durationArr2.push(7, 7);
-                scheduleArr2.push(pinch_date, pot_on_date);
-            }
+        if(_pinch != 0){
+            titleArr2.push('Pinch');
+            noteArr2.push(plant.pinch_note);
+            durationArr2.push(7);
+            scheduleArr2.push(pinch_date);
         }
+        if(_pot_on != 0){
+            titleArr2.push('Pot On');
+            noteArr2.push(plant.pot_on_note);
+            durationArr2.push(7);
+            scheduleArr2.push(pot_on_date);
+        }
+
         for (var i=0; i<titleArr2.length; i++){
             var taskObj = {
                 planting_id: planting._id,
@@ -126,51 +126,6 @@ function createTasks(planting, plant, plan){
                 scheduled_at: scheduleArr2[i],
                 duration: durationArr2[i],
                 note: noteArr2[i],
-                type: "incomplete",
-                rescheduled_at: "",
-                completed_at: ""
-            }
-            taskArr.push(taskObj);
-        }
-    }else{
-        var titleArr3 = ['Direct Seed/Sow', 'Harvest', 'Seed Indoors', 'Harden', 'Transplant'];
-        var noteArr3 = [plant.direct_seed_note, plant.harvest_note, plant.indoor_seed_note, '', plant.transplant_note];
-        var durationArr3 = [7, 1, 7, 7, 7];
-        var scheduleArr3 = [direct_seed_date, harvest_date, seed_indoors_date, harden_date, transplant_date];
-
-        if(_cold_stratify != 0){
-            titleArr3.push('Cold Stratify');
-            noteArr3.push('');
-            durationArr3.push(7);
-            scheduleArr3.push(cold_stratify_date);
-        }
-
-        if(planting.pinch && planting.pot_on){
-            if(planting.pinch === true && planting.pot_on === false){
-                titleArr3.push('Pinch');
-                noteArr3.push(plant.pinch_note);
-                durationArr3.push(7);
-                scheduleArr3.push(pinch_date);
-            }else if(planting.pinch === false && planting.pot_on === true){
-                titleArr3.push('Pot On');
-                noteArr3.push(plant.pot_on_note);
-                durationArr3.push(7);
-                scheduleArr3.push(pot_on_date);
-            }else{
-                titleArr3.push('Pinch', 'Pot On');
-                noteArr3.push(plant.pinch_note, plant.pot_on_note);
-                durationArr3.push(7, 7);
-                scheduleArr3.push(pinch_date, pot_on_date);
-            }
-        }
-
-        for (var i=0; i<titleArr3.length; i++){
-            var taskObj = {
-                planting_id: planting._id,
-                title: titleArr3[i],
-                scheduled_at: scheduleArr3[i],
-                duration: durationArr3[i],
-                note: noteArr3[i],
                 type: "incomplete",
                 rescheduled_at: "",
                 completed_at: ""

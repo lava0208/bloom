@@ -16,7 +16,7 @@ const Plant = (props) => {
         earliest_seed: "",
         latest_seed: "",
         direct_seed: "",
-        direct_sow_late: "",
+        direct_seed_pinch: "",
         cold_stratify: "",
         pinch: "",
         pot_on: "",
@@ -330,11 +330,11 @@ const Plant = (props) => {
                         type="number"
                         className={styles.input}
                         placeholder="Pinch"
-                        value={plant.direct_sow_late}
+                        value={plant.direct_seed_pinch}
                         onChange={(e) => {
                             setPlant({
                                 ...plant,
-                                direct_sow_late: e.target.value,
+                                direct_seed_pinch: e.target.value,
                             });
                         }}
                     />

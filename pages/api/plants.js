@@ -35,7 +35,7 @@ export default async function handler(req, res) {
                         description: req.body.description,
                         image: req.body.image,
                         direct_seed: req.body.direct_seed,
-                        direct_sow_late: req.body.direct_sow_late,
+                        direct_seed_pinch: req.body.direct_seed_pinch,
                         earliest_seed: req.body.earliest_seed,
                         latest_seed: req.body.latest_seed,
                         harden: req.body.harden,
