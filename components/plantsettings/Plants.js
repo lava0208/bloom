@@ -91,7 +91,7 @@ const Plants = () => {
                         <div className={styles.plantImage}>
                             {
                                 plant.image && (
-                                    <img src={"/assets/upload/" + plant.image } alt="image" />
+                                    <img src={plant.image } alt="image" />
                                 )
                             }
                         </div>

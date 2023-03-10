@@ -28,7 +28,7 @@ const CalendarDetail = (props) => {
         if(tmpIndex >= 0){
             const _nextItem = _tasks.data[tmpIndex + 1];
             if(_nextItem == undefined){
-                setNoNextTask("There is no next task") 
+                setNoNextTask("Done for the Season!") 
             }else{
                 setNextTask(_nextItem);
                 setDuration(calcDuration(_nextItem.scheduled_at, _task.data.scheduled_at))
@@ -37,7 +37,6 @@ const CalendarDetail = (props) => {
     }
 
     const calcDuration = (date1, date2) => {
-        console.log(date1 , date2);
         return moment(date1).diff(moment(date2), 'days');
     }
 
@@ -61,7 +60,7 @@ const CalendarDetail = (props) => {
                     <div className={styles.noteImage}>
                         {
                             plant.image && (
-                                <img src={"/assets/upload/" + plant.image } alt="image" />
+                                <img src={plant.image } alt="image" />
                             )
                         }
                     </div>
@@ -73,13 +72,19 @@ const CalendarDetail = (props) => {
                 </div>
                 <div className={styles.taskContainer}>
                     <div className={styles.detailContainer}>
-                        <h3>{task ? task.title : ""}</h3>
+                        <h3>
+                            {
+                                (task.title) === "Seed Indoors" ? "Seed " + plant.name + " Indoors" : 
+                                (task.title) === "Direct Seed/Sow" ? "Direct " + plant.name + " Seed/Sow" :
+                                task.title + " " + plant.name
+                            }
+                        </h3>
                         <h5>{task ? task.note : ""}</h5>
                     </div>
                     <div className={styles.nextContainer}>
                         <h4>Next Task:</h4>
                         {
-                            nextTask ? (
+                            Object.keys(nextTask).length > 0 ? (
                                 <h5><i>{nextTask.title}</i> in {duration === 0 ? '1 day' : duration + " days"}</h5>
                             ):(
                                <h5> { noNextTask } </h5>
@@ -89,7 +94,14 @@ const CalendarDetail = (props) => {
                 </div>
             </div>
             <div className={styles.buttonsContainer}>
-                <button onClick={() => props.completeTask(props.taskId)}>Mark Complete</button>
+                {
+                    task.type === "complete" ? (
+                        <button className={styles.active}>Completed</button>
+                    ) : (
+                        <button onClick={() => props.completeTask(props.taskId)}>Mark Complete</button>
+                    )
+                }
+                
                 <button onClick={props.cancelSchedule}>Cancel</button>
             </div>
         </div>

@@ -34,9 +34,9 @@ const List = () => {
     }
 
     const [todayTasks, setTodayTasks] = useState([]);
-    const [tomorrowTasks, setTomorrowTasks] = useState([]);
     const [weekTasks, setWeekTasks] = useState([]);
     const [overdueTasks, setOverdueTasks] = useState([]);
+    const [allTasks, setAllTasks] = useState([]);
 
     useEffect(() => {
         getAllTasks();
@@ -45,9 +45,9 @@ const List = () => {
     const getAllTasks = async () => {
         var _result = await taskService.getAllByDate();
         setTodayTasks(_result.data.today);
-        setTomorrowTasks(_result.data.tomorrow);
         setWeekTasks(_result.data.week);
         setOverdueTasks(_result.data.overdue);
+        setAllTasks(_result.data.all);
     }
 
     return (
@@ -97,13 +97,13 @@ const List = () => {
                 </div>
             </div>
             <div className={styles.tasksContainer}>
-                <h2 className={`${styles.tasksContainerTitle} `}>Tomorrow</h2>
+                <h2 className={`${styles.tasksContainerTitle} `}>This week</h2>
                 <div className={styles.tasksScrollContainer}>
-                    {tomorrowTasks.map((task, i) => (
+                    {weekTasks.map((task, i) => (
                         <div className={styles.taskContainer} key={i} onClick={() => openSchedule(task)}>
                             <div className={styles.taskInfo}>
                                 <h2>{task.title}</h2>
-                                <h3>Tomorrow</h3>
+                                <h3>{task.note }</h3>
                             </div>
                             <div className={`${styles.taskCap} ${styles.tomorrow}`}>
                                 {
@@ -117,12 +117,24 @@ const List = () => {
                 </div>
             </div>
             <div className={styles.thisWeekContainer}>
-                <h2>This Week</h2>
+                <h2>All Tasks</h2>
                 <div className={styles.thisWeekScrollContainer}>
-                    {weekTasks.map((task, i) => (
-                        <div className={styles.thisWeekTaskContainer} key={i}>
-                            <h3>{task.title}</h3>
-                            <h4>{moment(task.scheduled_at).format("dddd t\\h\\e Do")}</h4>
+                    {allTasks.map((task, i) => (
+                        <div className={styles.allTaskContainer} key={i}>
+                            <div className={styles.thisWeekTaskContainer}>
+                                <div className="text-center">
+                                    <h3>{task.title}</h3>
+                                    <h4>{moment(task.scheduled_at).format("dddd t\\h\\e Do")}</h4>
+                                </div>
+                                <div className={`${styles.taskCap} ${styles.all}`}>
+                                    {
+                                        task.type === "incomplete" && (
+                                            <img src="/assets/checkbox.png" alt="checkbox" />
+                                        )
+                                    }
+                                </div>
+                            </div>
+                            
                         </div>
                     ))}
                 </div>

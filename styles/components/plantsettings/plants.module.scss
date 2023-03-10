@@ -43,14 +43,20 @@
 }
 
 .plantsContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.plantModalContainer{
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    align-items: center;
     gap: 1rem;
 }
 
 .plantContainer {
-    width: calc(50% - 0.5rem);
+    width: 100%;
+    height: 100%;
     background: $blue;
     display: flex;
     gap: 2rem;
@@ -87,7 +93,7 @@
                 border-color: $purple;
             }
         }
-    }
+    }    
 }
 
 .plantImage {
@@ -95,6 +101,7 @@
     border-radius: 30px;
     flex: 1;
     height: 100%;
+    min-height: 100px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -151,22 +158,27 @@
     }
 }
 
-.modalImage {
-    background: $white;
-    border-radius: 30px;
-    height: 180px;
+.modalImageContainer{
     flex: 1 1;
-    text-align: center;
-    display: flex;    
-    align-items: center;
-    justify-content: center;
-    img{
-        max-height: 100%;
-        max-width: 100%;
+    position: relative;
+    .modalImage {
+        background: $white;
         border-radius: 30px;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+        height: 200px;
+        text-align: center;
+        display: flex;    
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        position: relative;
+        img{
+            max-height: 100%;
+            max-width: 100%;
+            border-radius: 30px;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
     }
 }
 
@@ -176,14 +188,24 @@
     }
 }
 
+.plantModalContainer{
+    .inputContainer {
+        flex: 2 1;
+    }
+}
+
 .inputContainer {
+    h5{
+        font-weight: 700;
+    }
+
     input,
     textarea {
         border: none;
         border-radius: 12px;
         color: $blue;
         font-weight: 600;
-        margin-bottom: 10px;
+        margin-bottom: 5px;
         padding: 7px 15px;
         width: 100%;
 
@@ -191,6 +213,10 @@
             border: none;
             outline: none;
         }
+    }
+
+    small{
+        color: $white;
     }
 
     input[type="checkbox"] {
@@ -250,6 +276,12 @@
         .searchButton {
             margin-top: 1rem;
             max-width: 100%;
+        }
+    }
+    .plantsContainer {
+        display: block;
+        .plantContainer{
+            margin-bottom: 1rem;
         }
     }
     .plantContainer {

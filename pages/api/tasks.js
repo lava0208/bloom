@@ -36,7 +36,7 @@ export default async function handler(req, res) {
                         $lt: moment().add(6, 'days').format('YYYY/MM/DD')
                     }
                 }).sort({scheduled_at: 1}).toArray();
-                data.overdue = await db.collection("tasks").find({type: "incomplete"}).sort({scheduled_at: 1}).toArray();
+                data.overdue = await db.collection("tasks").find({scheduled_at: {$gte: "2023/01/01", $lt: moment().format('YYYY/MM/DD')}, type: "incomplete"}).sort({scheduled_at: 1}).toArray();
                 data.season = await db.collection("plantings").aggregate([{ $group:{ _id : null, sum : { $sum: "$seeds" } }}]).toArray();
                 data.all = await db.collection("tasks").find({}).sort({scheduled_at: 1}).toArray();
                 return res.json({ status: true, data: data });

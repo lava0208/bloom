@@ -8,11 +8,8 @@ const CurrentPlan = (props) => {
     //... Initialize
     const [pinchCheckbox, setPinchCheckbox] = useState(false);
     const [potCheckbox, setPotCheckbox] = useState(false);
-    const seeds = [
-        { label: "Direct Sow", value: 1 },
-        { label: "Direct Indoors", value: 2 }
-    ]
-    const [activeSeed, setActiveSeed] = useState(-1);
+    const [activeDirectSeed, setActiveDirectSeed] = useState(false);
+    const [activeStartIndoors, setActiveStartIndoors] = useState(false);
     const harvests = [
         { label: "Early", value: 1 },
         { label: "Regular", value: 2 },
@@ -39,7 +36,12 @@ const CurrentPlan = (props) => {
             getPlanting();
             setPinchCheckbox(props.planting.pinch);
             setPotCheckbox(props.planting.pot_on);
-            setActiveSeed(props.planting.direct_sow ? 1 : 2);
+            if(props.planting.direct_sow){
+                setActiveDirectSeed(true)
+            }
+            if(props.planting.direct_indoors){
+                setActiveStartIndoors(true)
+            }
             var _harvest = harvests.find(x => x.label === props.planting.harvest)
             setActiveHarvest(_harvest ? _harvest.value : -1);
         }else{
@@ -51,7 +53,6 @@ const CurrentPlan = (props) => {
     //... get plan nand planting
     const [plant, setPlant] = useState({});
     const getPlantAndPlanting = async () => {
-        console.log(userService.getId());
         var _plan = await planService.getByUserId(userService.getId());
         var _plant = await plantService.getById(props.plantId);
         var _planting = { ...planting };
@@ -61,6 +62,7 @@ const CurrentPlan = (props) => {
         setPlant(_plant.data);
         setPlanting(_planting);
     }
+
 
     const getPlanting = async () => {
         var _plant = await plantService.getById(props.plantId);
@@ -123,8 +125,9 @@ const CurrentPlan = (props) => {
             succession: "",
             spacing: ""
         }))
-        setActiveSeed(-1);
         setActiveHarvest(-1);
+        setActiveDirectSeed(false);
+        setActiveStartIndoors(false);
         setPinchCheckbox(false);
         setPotCheckbox(false);
     }
@@ -132,14 +135,14 @@ const CurrentPlan = (props) => {
     return (
         <div className={styles.container}>
             <div className="modal-header">
-                <h5 className="modal-title">{props.title}</h5>
+                <h5 className="modal-title">{props.type === "create" ? "Add " : "Edit "} {plant.name} </h5>
             </div>
             <div className={styles.currentPlanContainer}>
                 <div className={styles.planDetailsContainer}>
                     <div className={styles.planImage}>
                         {
                             plant.image && (
-                                <img src={"/assets/upload/" + plant.image } alt="image" />
+                                <img src={plant.image } alt="image" />
                             )
                         }
                     </div>
@@ -152,15 +155,32 @@ const CurrentPlan = (props) => {
                 <div className={styles.planOptionsContainer}>
                     <div className={styles.seedingRow}>
                         <h4>Seeding</h4>
-                        {seeds.map((element, i) => (
-                            <button key={i} 
-                                onClick={() => {setActiveSeed(element.value), setPlanting({...planting, direct_sow: element.value === 1 ? true : false, direct_indoors: element.value === 1 ? false : true})}}
-                                className={activeSeed === i + 1 ?  styles.selected : ''}
-                                value={planting.direct_sow}
-                            >
-                                {element.label}
-                            </button>
-                        ))}
+                        {
+                            plant.direct_seed !== "" ? (
+                                <button 
+                                    onClick={() => {setActiveDirectSeed(!activeDirectSeed), setPlanting({...planting, direct_sow: !activeDirectSeed})}}
+                                    className={activeDirectSeed === true ?  styles.selected : ''}
+                                    value={planting.direct_sow}
+                                >
+                                    Direct Sow
+                                </button>
+                            ): (
+                                <></>
+                            )
+                        }
+                        {
+                            plant.earliest_seed !== "" || plant.latest_seed !== "" ? (
+                                <button 
+                                    onClick={() => {setActiveStartIndoors(!activeStartIndoors), setPlanting({...planting, direct_indoors: !activeStartIndoors})}}
+                                    className={activeStartIndoors === true ?  styles.selected : ''}
+                                    value={planting.direct_indoors}
+                                >
+                                    Start Indoors
+                                </button>
+                            ) : (
+                                <></>
+                            )
+                        }
                     </div>
                     <div className={styles.quantityRow}>
                         <h4>Quantity</h4>
@@ -196,20 +216,32 @@ const CurrentPlan = (props) => {
                             </div>
                         </div>
                         <div className={styles.successionCheckboxesContainer}>
-                            <div className={styles.successionCheckboxRow}>
-                                <h6>Pinch</h6>
-                                <div
-                                    onClick={() => {setPinchCheckbox(!pinchCheckbox), setPlanting({...planting, pinch: !pinchCheckbox})}}
-                                    className={`${styles.checkbox} ${pinchCheckbox ? styles.active : null}`}
-                                ></div>
-                            </div>
-                            <div className={styles.successionCheckboxRow}>
-                                <h6>Pot On</h6>
-                                <div
-                                    onClick={() => {setPotCheckbox(!potCheckbox), setPlanting({...planting, pot_on: !potCheckbox})}}
-                                    className={`${styles.checkbox} ${potCheckbox ? styles.active : null}`}
-                                ></div>
-                            </div>
+                            {
+                                plant.pinch !== "" ? (
+                                    <div className={styles.successionCheckboxRow}>
+                                        <h6>Pinch</h6>
+                                        <div
+                                            onClick={() => {setPinchCheckbox(!pinchCheckbox), setPlanting({...planting, pinch: !pinchCheckbox})}}
+                                            className={`${styles.checkbox} ${pinchCheckbox ? styles.active : null}`}
+                                        ></div>
+                                    </div>
+                                ) : (
+                                    <></>
+                                )
+                            }
+                            {
+                                plant.pot_on !== "" ? (
+                                    <div className={styles.successionCheckboxRow}>
+                                        <h6>Pot On</h6>
+                                        <div
+                                            onClick={() => {setPotCheckbox(!potCheckbox), setPlanting({...planting, pot_on: !potCheckbox})}}
+                                            className={`${styles.checkbox} ${potCheckbox ? styles.active : null}`}
+                                        ></div>
+                                    </div>
+                                ) : (
+                                    <></>
+                                )
+                            }
                         </div>
                     </div>
                 </div>

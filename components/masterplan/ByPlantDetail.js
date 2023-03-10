@@ -138,7 +138,7 @@ const ByPlantDetail = (props) => {
                     <div className={styles.detailImage}>
                         {
                             plant.image && (
-                                <img src={"/assets/upload/" + plant.image} alt="image" />
+                                <img src={plant.image} alt="image" />
                             )
                         }
                     </div>

@@ -59,7 +59,7 @@ const AvailablePlans = () => {
                         <div className={styles.planImage}>
                             {
                                 plant.image && (
-                                    <img src={"/assets/upload/" + plant.image } alt="image" />
+                                    <img src={plant.image } alt="image" />
                                 )
                             }
                         </div>
@@ -80,7 +80,7 @@ const AvailablePlans = () => {
             </div>
             <Modal toggle={() => setModalOpen(!modalOpen)} isOpen={modalOpen} centered modalClassName="modifyPlanModal">
                 <ModalBody>
-                    <CurrentPlan title="Add Crimson Glory" plantId={plantId}  savePlanting={savePlanting} />
+                    <CurrentPlan type="create" plantId={plantId}  savePlanting={savePlanting} />
                 </ModalBody>
             </Modal>
         </>

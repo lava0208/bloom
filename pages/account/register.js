@@ -3,7 +3,10 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { userService } from "services";
 
-import axios from "axios";
+import { Spinner } from "reactstrap";
+
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { storage } from "firebaseConfig";
 
 import styles from "~styles/pages/account/register.module.scss";
 
@@ -29,29 +32,48 @@ const Register = () => {
         return true;
     }
 
-    const [uploading, setUploading] = useState(false);
-    const [selectedImage, setSelectedImage] = useState("");
-    const [selectedFile, setSelectedFile] = useState("");
+    const [imageFile, setImageFile] = useState()
+    const [downloadURL, setDownloadURL] = useState('')
+    const [percent, setPercent] = useState(0);
 
-    const handleUpload = async () => {
-        setUploading(true);
-        try {
-            if(selectedFile !== ""){
-                const formData = new FormData();
-                formData.append("myImage", selectedFile);
-                await axios.post("/api/upload", formData)
-                .then(response => {
-                    if(response.data.status == true){
-                        user.profile_path = response.data.data
-                        setUploading(false);
-                    }
-                });
+    const handleSelectedFile = (files) => {
+        if (files && files[0].size < 10000000) {
+            setImageFile(files[0])
+            const _imageFile = files[0]
+            if (_imageFile) {
+                const name = _imageFile.name
+                const storageRef = ref(storage, `image/${name}`)
+                const uploadTask = uploadBytesResumable(storageRef, _imageFile)
+    
+                uploadTask.on(
+                    'state_changed',
+                    (snapshot) => {
+                        const _percent = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                        setPercent(_percent);
+                    },
+                    (error) => {
+                        swal({
+                            title: "Error!",
+                            text: error.message,
+                            icon: "error",
+                        });
+                    },
+                    () => {
+                        getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+                            user.profile_path = url
+                            setDownloadURL(url)
+                        })
+                    },
+                )
             }
-            
-        } catch (error) {
-            console.log(error.response?.data);
-        }        
-    };
+        } else {
+            swal({
+                title: "Error!",
+                text: "File size to large",
+                icon: "error",
+            });
+        }
+    }
 
     const registerUser = async () => {
         const result = await userService.register(user);
@@ -75,13 +97,8 @@ const Register = () => {
     const register = async () => {
         if (user.name !== "" && user.email !== "" && user.password !== "") {
             if (emailValidation()) {
-                if (selectedFile){
-                    handleUpload().then(function(){
-                        registerUser()
-                    });
-                }else{
-                    registerUser()
-                }
+                user.profile_path = downloadURL;
+                registerUser()
             }
         } else {
             swal({
@@ -130,19 +147,20 @@ const Register = () => {
                             type="file"
                             accept="image/png, image/gif, image/jpeg"
                             hidden
-                            onChange={({ target }) => {
-                                if (target.files) {
-                                    const file = target.files[0];
-                                    setSelectedImage(URL.createObjectURL(file));
-                                    setSelectedFile(file);
-                                }
-                            }}
+                            onChange={(e) => handleSelectedFile(e.target.files)}
                         />
-                        {selectedImage ? (
-                            <img src={selectedImage} alt="profile" />
+                        {downloadURL ? (
+                            <img src={downloadURL} alt="profile" />
                         ) : (
-                            <img src={"/assets/profile.png"} alt="blank profile" />
+                            user.profile_path && (
+                                <img src={user.profile_path} alt="" />
+                            )
                         )}
+                        {
+                            imageFile && percent < 100 && (
+                                <Spinner color="info"> Loading... </Spinner>
+                            )
+                        }
                     </label>
                 </div>
 
@@ -162,18 +180,10 @@ const Register = () => {
             </div>
 
             <div
-                disabled={uploading}
-                style={{ opacity: uploading ? ".5" : "1" }}
                 className={styles.nextButtonContainer}
                 onClick={() => register()}
             >
-                {
-                    uploading? (
-                        <img src="/assets/loading.gif" alt="loading" />
-                    ) : (
-                        <h5>Next</h5>
-                    )
-                }
+                <h5>Next</h5>
             </div>
         </div>
     );

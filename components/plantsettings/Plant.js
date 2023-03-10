@@ -2,7 +2,10 @@
 import React, { useEffect, useState } from "react";
 import { userService, plantService } from "services";
 
-import axios from "axios";
+import { Spinner } from "reactstrap";
+
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { storage } from "firebaseConfig";
 
 import styles from "~styles/components/plantsettings/plants.module.scss";
 
@@ -46,29 +49,48 @@ const Plant = (props) => {
         }       
     }
 
-    const [uploading, setUploading] = useState(false);
-    const [selectedImage, setSelectedImage] = useState("");
-    const [selectedFile, setSelectedFile] = useState("");
+    const [imageFile, setImageFile] = useState()
+    const [downloadURL, setDownloadURL] = useState('')
+    const [percent, setPercent] = useState(0);
 
-    const handleUpload = async () => {
-        setUploading(true);
-        try {
-            if(selectedFile !== ""){
-                const formData = new FormData();
-                formData.append("myImage", selectedFile);
-                await axios.post("/api/upload", formData)
-                .then(response => {
-                    if(response.data.status == true){
-                        plant.image = response.data.data
-                        setUploading(false);
-                    }
-                });
+    const handleSelectedFile = (files) => {
+        if (files && files[0].size < 10000000) {
+            setImageFile(files[0])
+            const _imageFile = files[0]
+            if (_imageFile) {
+                const name = _imageFile.name
+                const storageRef = ref(storage, `image/${name}`)
+                const uploadTask = uploadBytesResumable(storageRef, _imageFile)
+    
+                uploadTask.on(
+                    'state_changed',
+                    (snapshot) => {
+                        const _percent = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                        setPercent(_percent);
+                    },
+                    (error) => {
+                        swal({
+                            title: "Error!",
+                            text: error.message,
+                            icon: "error",
+                        });
+                    },
+                    () => {
+                        getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+                            plant.image = url
+                            setDownloadURL(url)
+                        })
+                    },
+                )
             }
-            
-        } catch (error) {
-            console.log(error.response?.data);
-        }        
-    };
+        } else {
+            swal({
+                title: "Error!",
+                text: "File size to large",
+                icon: "error",
+            });
+        }
+    }
 
     const uploadPlant = async () => {
         if(props.id === 0){
@@ -96,14 +118,17 @@ const Plant = (props) => {
 
     const savePlant = async () => {
         if (plant.name !== "" && plant.species !== "" && plant.description !== "") {
-            plant.user_id = userService.getId();
-            if (selectedFile){
-                handleUpload().then(function(){
-                    uploadPlant()
+            if(plant.earliest_seed === "" && plant.latest_seed === "" && plant.direct_seed === ""){
+                swal({
+                    title: "Warning!",
+                    text: "Please fill all fields.",
+                    icon: "warning",
                 });
             }else{
-                uploadPlant()
-            }                      
+                plant.user_id = userService.getId();
+                plant.image = downloadURL;
+                uploadPlant();
+            }                                  
         } else {
             swal({
                 title: "Warning!",
@@ -115,31 +140,34 @@ const Plant = (props) => {
 
     return (
         <>
-            <div className={styles.plantsContainer}>
-                <label className={styles.modalImage}>
-                    <input
-                        type="file"
-                        accept="image/png, image/gif, image/jpeg"
-                        hidden
-                        onChange={({ target }) => {
-                            if (target.files) {
-                                const file = target.files[0];
-                                setSelectedImage(URL.createObjectURL(file));
-                                setSelectedFile(file);
-                            }
-                        }}
-                    />
-                    {selectedImage ? (
-                        <img src={selectedImage} alt="profile" />
-                    ) : ( plant.image &&
-                        <img src={"/assets/upload/" + plant.image} alt="image" />
-                    )}
-                </label>
+            <div className={styles.plantModalContainer}>
+                <div className={styles.modalImageContainer}>
+                    <label className={styles.modalImage}>
+                        <input
+                            type="file"
+                            accept="image/png, image/gif, image/jpeg"
+                            hidden
+                            onChange={(e) => handleSelectedFile(e.target.files)}
+                        />
+                        {downloadURL ? (
+                            <img src={downloadURL} alt="plant" />
+                        ) : (
+                            plant.image && (
+                                <img src={plant.image} alt="plant" />
+                            )                            
+                        )}
+                    </label>
+                    {
+                        imageFile && percent < 100 && (
+                            <Spinner color="info"> Loading... </Spinner>
+                        )
+                    }
+                </div>
                 <div className={styles.inputContainer}>
+                    <small>Variety Name</small>
                     <input
                         type="text"
                         className={styles.input}
-                        placeholder="Variety Name"
                         value={plant.name}
                         onChange={(e) => {
                             setPlant({
@@ -148,10 +176,10 @@ const Plant = (props) => {
                             });
                         }}
                     />
+                    <small>Species</small>
                     <input
                         type="text"
                         className={styles.input}
-                        placeholder="Species"
                         value={plant.species}
                         onChange={(e) => {
                             setPlant({
@@ -160,10 +188,10 @@ const Plant = (props) => {
                             });
                         }}
                     />
+                    <small>Description</small>
                     <textarea
                         rows="3"
                         className={styles.input}
-                        placeholder="Description"
                         value={plant.description}
                         onChange={(e) => {
                             setPlant({
@@ -177,10 +205,10 @@ const Plant = (props) => {
             <div className="row mt-4">
                 <div className={styles.inputContainer + " col-md-6"}>
                     <h5>Indoor Timing</h5>
+                    <small>Early Seed</small>
                     <input
                         type="number"
                         className={styles.input}
-                        placeholder="Early Seed"
                         value={plant.earliest_seed}
                         onChange={(e) => {
                             setPlant({
@@ -189,10 +217,10 @@ const Plant = (props) => {
                             });
                         }}
                     />
+                    <small>Late Seed</small>
                     <input
                         type="number"
                         className={styles.input}
-                        placeholder="Late Seed"
                         value={plant.latest_seed}
                         onChange={(e) => {
                             setPlant({
@@ -201,10 +229,10 @@ const Plant = (props) => {
                             });
                         }}
                     />
+                    <small>Pinch</small>
                     <input
                         type="number"
                         className={styles.input}
-                        placeholder="Pinch"
                         value={plant.pinch}
                         onChange={(e) => {
                             setPlant({
@@ -213,10 +241,10 @@ const Plant = (props) => {
                             });
                         }}
                     />
+                    <small>Pot On</small>
                     <input
                         type="number"
                         className={styles.input}
-                        placeholder="Pot On"
                         value={plant.pot_on}
                         onChange={(e) => {
                             setPlant({
@@ -225,10 +253,10 @@ const Plant = (props) => {
                             });
                         }}
                     />
+                    <small>Harden</small>
                     <input
                         type="number"
                         className={styles.input}
-                        placeholder="Harden"
                         value={plant.harden}
                         onChange={(e) => {
                             setPlant({
@@ -237,10 +265,10 @@ const Plant = (props) => {
                             });
                         }}
                     />
+                    <small>Transplant</small>
                     <input
                         type="number"
                         className={styles.input}
-                        placeholder="Transplant"
                         value={plant.transplant}
                         onChange={(e) => {
                             setPlant({
@@ -250,10 +278,10 @@ const Plant = (props) => {
                         }}
                     />
                     <h5 className="mt-3">Harvest</h5>
+                    <small>Maturity Early</small>
                     <input
                         type="number"
                         className={styles.input}
-                        placeholder="Maturity Early"
                         value={plant.maturity_early}
                         onChange={(e) => {
                             setPlant({
@@ -262,10 +290,10 @@ const Plant = (props) => {
                             });
                         }}
                     />
+                    <small>Maturity Late</small>
                     <input
                         type="number"
                         className={styles.input}
-                        placeholder="Maturity Late"
                         value={plant.maturity_late}
                         onChange={(e) => {
                             setPlant({
@@ -314,10 +342,10 @@ const Plant = (props) => {
                 </div>
                 <div className={styles.inputContainer + " col-md-6"}>
                     <h5>Direct Seed Timing</h5>
+                    <small>Direct Seed</small>
                     <input
                         type="number"
                         className={styles.input}
-                        placeholder="Direct Seed"
                         value={plant.direct_seed}
                         onChange={(e) => {
                             setPlant({
@@ -326,10 +354,10 @@ const Plant = (props) => {
                             });
                         }}
                     />
+                    <small>Pinch</small>
                     <input
                         type="number"
                         className={styles.input}
-                        placeholder="Pinch"
                         value={plant.direct_seed_pinch}
                         onChange={(e) => {
                             setPlant({
@@ -338,11 +366,11 @@ const Plant = (props) => {
                             });
                         }}
                     />
-                    <h5>Seeding</h5>
+                    <h5 className="mt-4">Seeding</h5>
+                    <small>Depth (mm)</small>
                     <input
                         type="number"
                         className={styles.input}
-                        placeholder="Depth (mm)"
                         value={plant.depth}
                         onChange={(e) => {
                             setPlant({
@@ -351,10 +379,10 @@ const Plant = (props) => {
                             });
                         }}
                     />
+                    <small>Cold Stratify (weeks)</small>
                     <input
                         type="number"
                         className={styles.input}
-                        placeholder="Cold Stratify (weeks)"
                         value={plant.cold_stratify}
                         onChange={(e) => {
                             setPlant({
@@ -387,7 +415,7 @@ const Plant = (props) => {
                             });
                         }}
                     />
-                    <h5>Direct Seed Note</h5>
+                    <h5 className="mt-3">Direct Seed Note</h5>
                     <textarea
                         rows="3"
                         value={plant.direct_seed_note}

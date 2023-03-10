@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { userService, planService } from "services";
 import GoogleMap from "./google-map";
 import moment from "moment";
+import Stripe from 'stripe';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import styles from "~styles/pages/account/register.module.scss";

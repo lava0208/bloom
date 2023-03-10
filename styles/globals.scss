@@ -114,6 +114,17 @@ h6 {
     }
 }
 
+.progress{
+    width: 50%;
+    margin: auto;
+}
+
+.spinner-border{
+    position: absolute;
+    left: calc(50% - 1rem);
+    top: calc(50% - 1rem);
+}
+
 @media screen and (max-width: 576px) {
     .modal-dialog {
         .modal-content {

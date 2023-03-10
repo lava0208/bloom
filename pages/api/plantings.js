@@ -35,11 +35,12 @@ function createTasks(planting, plant, plan){
 
     //... schedule dates
     let cold_stratify_date = moment(last_frost).subtract(_cold_stratify, 'days').format('YYYY/MM/DD');
-    let pot_on_date = moment(last_frost).add(_pot_on, 'days').format('YYYY/MM/DD');
+    let pot_on_date;
     let harvest_date = moment(last_frost).add(_maturity_early, 'days').format('YYYY/MM/DD');
     let seed_indoors_date;
     let direct_seed_date;
-    if(planting.direct_indoors){
+    let pinch_date;
+    if(planting.direct_indoors){        
         switch (planting.harvest) {
             case "Early":
                 seed_indoors_date = moment(last_frost).subtract(_earliest_indoor_seed, 'days').format('YYYY/MM/DD');
@@ -51,11 +52,14 @@ function createTasks(planting, plant, plan){
                 seed_indoors_date = moment(last_frost).subtract(_latest_indoor_seed, 'days').format('YYYY/MM/DD');
                 break;
         }
+        pinch_date = moment(seed_indoors_date).add(_pinch, 'days').format('YYYY/MM/DD');
+        pot_on_date = moment(seed_indoors_date).add(_pot_on, 'days').format('YYYY/MM/DD');
     }else{
         direct_seed_date = moment(last_frost).add(_direct_sow, 'days').format('YYYY/MM/DD');
+        pinch_date = moment(direct_seed_date).add(_pinch, 'days').format('YYYY/MM/DD');
+        pot_on_date = moment(direct_seed_date).add(_pot_on, 'days').format('YYYY/MM/DD');
     }
     let harden_date = moment(last_frost).add(_harden, 'days').format('YYYY/MM/DD');
-    let pinch_date = moment(last_frost).add(_pinch, 'days').format('YYYY/MM/DD');
     let transplant_date = moment(last_frost).add(_transplant, 'days').format('YYYY/MM/DD');
 
     var taskArr = [];
@@ -95,10 +99,10 @@ function createTasks(planting, plant, plan){
         }
     //... Enable Start Indoors
     }else{
-        var titleArr2 = ['Seed Indoors', 'Harden', 'Transplant'];
-        var noteArr2 = [plant.indoor_seed_note, '', plant.transplant_note];
-        var durationArr2 = [7, 7, 7];
-        var scheduleArr2 = [seed_indoors_date, harden_date, transplant_date];
+        var titleArr2 = ['Seed Indoors', 'Harden', 'Transplant', 'Harvest'];
+        var noteArr2 = [plant.indoor_seed_note, '', plant.transplant_note, plant.harvest_note];
+        var durationArr2 = [7, 7, 7, 1];
+        var scheduleArr2 = [seed_indoors_date, harden_date, transplant_date, harvest_date];
 
         if(_cold_stratify != 0){
             titleArr2.push('Cold Stratify');
@@ -206,7 +210,7 @@ export default async function handler(req, res) {
 
             await taskService.update(req.query.id , createTasks(req.body, _plant, _plan));
 
-            return res.json({ status: true, message: 'Planting is updated successfully.' });
+            return res.json({ status: true, message: 'Planting is updated successfully. Refresh the page.' });
 
         //... delete a planting
         case "DELETE":

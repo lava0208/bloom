@@ -51,13 +51,23 @@
     height: min-content;
 }
 
+.allTaskContainer {
+    width: 100%;
+    border-radius: 25px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: stretch;
+    overflow: hidden;
+    position: relative;
+}
+
 .taskInfo {
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 1rem 0;
+    padding: 1rem 0;    
 
     h2 {
         font-weight: 800;
@@ -96,6 +106,14 @@
         background: $grey;
     }
 
+    &.all{
+        background: $grey;
+        position: absolute;
+        right: 0;
+        border-radius: 0 25px 25px 0;
+        height: 100%;
+    }
+
     .check{
         color: $white;
         width: 24px;
@@ -120,9 +138,9 @@
 }
 
 .thisWeekScrollContainer {
-    flex: 1;
-    overflow: auto;
     width: 100%;
+    overflow: auto;
+    max-height: 600px;
 }
 
 .thisWeekTaskContainer {
@@ -135,6 +153,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    position: relative;
 
     h3 {
         color: $white;

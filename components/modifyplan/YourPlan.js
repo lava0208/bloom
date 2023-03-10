@@ -103,7 +103,7 @@ const YourPlan = () => {
             </div>
             <Modal toggle={() => setPlanEditModalOpen(!planEditModalOpen)} isOpen={planEditModalOpen} centered modalClassName="modifyPlanModal">
                 <ModalBody>
-                    <CurrentPlan title="Edit Crimson Glory" plantId={plantId} planting={planting} savePlanting={savePlanting} />
+                    <CurrentPlan type="edit" plantId={plantId} planting={planting} savePlanting={savePlanting} />
                 </ModalBody>
             </Modal>
             <Modal toggle={() => setPlanSettingsModalOpen(!planSettingsModalOpen)} isOpen={planSettingsModalOpen} centered>

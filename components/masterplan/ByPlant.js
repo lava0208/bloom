@@ -68,7 +68,7 @@ const ByPlant = () => {
                         <div className={styles.plantImage}>
                             {
                                 planting.image && (
-                                    <img src={"/assets/upload/" + planting.image } alt="image" />
+                                    <img src={planting.image } alt="image" />
                                 )
                             }
                         </div>
