@@ -5,7 +5,7 @@ import { userService } from "services";
 import bcrypt from "bcryptjs";
 import { Spinner } from "reactstrap";
 
-import { checkout } from "./checkout";
+import { checkout } from "./ProfileCheckout";
 
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 import { storage } from "firebaseConfig";
