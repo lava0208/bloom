@@ -5,7 +5,7 @@ import { userService } from "services";
 import bcrypt from "bcryptjs";
 import { Spinner } from "reactstrap";
 
-import { profilecheckout } from "./ProfileCheckout";
+import { loadStripe } from "@stripe/stripe-js";
 
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 import { storage } from "firebaseConfig";
@@ -117,6 +117,31 @@ const Profile = () => {
                 icon: "error",
             });
         }
+    }
+
+    const checkout =  async () => {
+        let stripePromise = null
+
+        const getStripe = () => {
+            if(!stripePromise) {
+                stripePromise = loadStripe(process.env.NEXT_PUBLIC_API_KEY)
+            }
+            return stripePromise
+        }
+
+        const stripe = await getStripe()
+
+        await stripe.redirectToCheckout({
+            mode: 'payment',
+            lineItems: [
+                {
+                    price: "price_1MkWysIDhuOwOk66RmgdkCAJ",
+                    quantity: 1
+                }
+            ],
+            successUrl: `${window.location.origin}/profile?session_id={CHECKOUT_SESSION_ID}`,
+            cancelUrl: window.location.origin
+        })
     }
 
     const saveUser = () => {
@@ -298,16 +323,7 @@ const Profile = () => {
                     isPro ? (
                         <button className={styles.button3 + " " + styles.button4}>Access Priority Support</button>
                     ) : (
-                        <button className={styles.button3} onClick={(() => 
-                            profilecheckout({
-                                lineItems: [
-                                    {
-                                        price: "price_1MkWysIDhuOwOk66RmgdkCAJ",
-                                        quantity: 1
-                                    }
-                                ]
-                            })
-                        )}>Upgrade Now</button>
+                        <button className={styles.button3} onClick={(() => checkout())}>Upgrade Now</button>
                     )
                 }
                 {

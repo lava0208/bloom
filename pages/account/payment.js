@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import { userService } from "services";
 
-import { paymentcheckout } from "./payment-checkout";
+import { loadStripe } from "@stripe/stripe-js";
 
 import styles from "~styles/pages/account/register.module.scss";
 import styles1 from "~styles/pages/account/payment.module.scss";
@@ -23,6 +23,31 @@ const Payment = () => {
         if(userService.getId() === null){
             router.push("/account/login")
         }
+    }
+
+    const checkout =  async () => {
+        let stripePromise = null
+
+        const getStripe = () => {
+            if(!stripePromise) {
+                stripePromise = loadStripe(process.env.NEXT_PUBLIC_API_KEY)
+            }
+            return stripePromise
+        }
+
+        const stripe = await getStripe()
+
+        await stripe.redirectToCheckout({
+            mode: 'payment',
+            lineItems: [
+                {
+                    price: "price_1MkWysIDhuOwOk66RmgdkCAJ",
+                    quantity: 1
+                }
+            ],
+            successUrl: `${window.location.origin}/account/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancelUrl: window.location.origin
+        })
     }
 
     return (
@@ -57,16 +82,7 @@ const Payment = () => {
                         </div>
                         <div
                             className={styles1.proButtonContainer}
-                            onClick={(() => {
-                                paymentcheckout({
-                                    lineItems: [
-                                        {
-                                            price: "price_1MkWysIDhuOwOk66RmgdkCAJ",
-                                            quantity: 1
-                                        }
-                                    ]
-                                })
-                            })}
+                            onClick={(() => checkout())}
                         >
                             <h5 className={styles.textUppercase}>go pro</h5>
                         </div>
