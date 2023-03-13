@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import { userService } from "services";
 
-import { checkout } from "./checkout";
+import { paymentcheckout } from "./payment-checkout";
 
 import styles from "~styles/pages/account/register.module.scss";
 import styles1 from "~styles/pages/account/payment.module.scss";
@@ -58,7 +58,7 @@ const Payment = () => {
                         <div
                             className={styles1.proButtonContainer}
                             onClick={(() => {
-                                checkout({
+                                paymentcheckout({
                                     lineItems: [
                                         {
                                             price: "price_1MkWysIDhuOwOk66RmgdkCAJ",
