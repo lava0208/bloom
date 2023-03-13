@@ -1,5 +1,6 @@
 import clientPromise from "../../lib/mongodb";
 import { ObjectId } from "mongodb";
+import { userService } from "services";
 
 export default async function handler(req, res) {
     const client = await clientPromise;
@@ -29,7 +30,7 @@ export default async function handler(req, res) {
                 },
                 {
                     $set: {
-                        user_id: req.body.user_id,
+                        userid: req.body.userid,
                         name: req.body.name,
                         species: req.body.species,
                         description: req.body.description,

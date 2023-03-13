@@ -5,6 +5,8 @@ import { userService } from "services";
 import bcrypt from "bcryptjs";
 import { Spinner } from "reactstrap";
 
+import { checkout } from "./checkout";
+
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 import { storage } from "firebaseConfig";
 
@@ -69,13 +71,32 @@ const Profile = () => {
 
     useEffect(() => {
         getUser();
-    }, [])
+    }, [router.query])
 
     const getUser = async () => {
-        const user = await userService.getById(userService.getId());
-        if (user.data !== null) {
-            setOriginPassword(user.data.password);
-            setUser(user.data);
+        if(userService.getId() !== null){
+            const _result = await userService.getById(userService.getId());
+            const user = _result.data;
+            if (user !== null) {
+                setOriginPassword(user.password);
+                setUser(user);
+                if(user.share_custom_varieties){
+                    setIsPro(true);
+                }
+                if(router.query.session_id !== null && router.query.session_id !== undefined){
+                    user.share_custom_varieties = true;
+                    const result = await userService.update(userService.getId(), user);
+                    if (result.status === true) {
+                        router.replace("/profile");
+                    } else {
+                        swal({
+                            title: "Error!",
+                            text: result.message,
+                            icon: "error",
+                        });
+                    }
+                }
+            }
         }
     }
 
@@ -86,6 +107,8 @@ const Profile = () => {
                 title: "Success!",
                 text: result.message,
                 icon: "success",
+            }).then(function(){
+                router.replace(router.asPath);
             });
         } else {
             swal({
@@ -133,6 +156,39 @@ const Profile = () => {
                 localStorage.removeItem("user");
                 localStorage.removeItem("userid");
                 router.push("/account/register");
+            }
+        })
+    }
+
+    const cancelPro = async () => {
+        swal({
+            title: "Wait!",
+            text: "Are you sure you want to disconnect your payment?",
+            icon: "warning",
+            buttons: [
+                'No, cancel it!',
+                'Yes, I am sure!'
+            ],
+            dangerMode: true,
+        }).then(async function (isConfirm) {
+            if (isConfirm) {
+                user.share_custom_varieties = false;
+                var _result = await userService.update(userService.getId(), user);
+                if (_result.status === true) {
+                    swal({
+                        title: "Success!",
+                        text: "Disconnected your payment successfully.",
+                        icon: "success",
+                    }).then(function(){
+                        location.reload();
+                    });
+                } else {
+                    swal({
+                        title: "Error!",
+                        text: _result.message,
+                        icon: "error",
+                    });
+                }
             }
         })
     }
@@ -242,10 +298,23 @@ const Profile = () => {
                     isPro ? (
                         <button className={styles.button3 + " " + styles.button4}>Access Priority Support</button>
                     ) : (
-                        <button className={styles.button3} onClick={() => setIsPro(true)}>Upgrade Now</button>
+                        <button className={styles.button3} onClick={(() => 
+                            checkout({
+                                lineItems: [
+                                    {
+                                        price: "price_1MkWysIDhuOwOk66RmgdkCAJ",
+                                        quantity: 1
+                                    }
+                                ]
+                            })
+                        )}>Upgrade Now</button>
                     )
                 }
-                <button className={styles.button2} onClick={() => setIsPro(false)}>Cancel PRO</button>
+                {
+                    isPro && (
+                        <button className={styles.button2} onClick={() => cancelPro()}>Cancel PRO</button>
+                    )
+                }
             </div>
         </div>
     </>

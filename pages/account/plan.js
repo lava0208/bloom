@@ -1,10 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { userService, planService } from "services";
 import GoogleMap from "./google-map";
 import moment from "moment";
-import Stripe from 'stripe';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import styles from "~styles/pages/account/register.module.scss";
@@ -20,6 +19,16 @@ const Plan = () => {
     });
 
     const router = useRouter();
+
+    useEffect(() => {
+        getUser();
+    }, [])
+
+    const getUser = async () => {
+        if(userService.getId() === null){
+            router.push("/account/login")
+        }
+    }
 
     const register = async () => {
         if (plan.name !== "" && plan.size !== "") {
@@ -105,7 +114,7 @@ const Plan = () => {
                 <DatePicker
                     placeholder="Last Frost date"
                     className={styles.input}
-                    selected={plan.last_frost}
+                    selected={new Date(plan.last_frost)}
                     value={dateFormat(plan.last_frost)}
                     onChange={(e) => {
                         setPlan({
@@ -118,7 +127,7 @@ const Plan = () => {
                 <DatePicker
                     placeholder="First Frost date"
                     className={styles.input}
-                    selected={plan.first_frost}
+                    selected={new Date(plan.first_frost)}
                     value={dateFormat(plan.first_frost)}
                     onChange={(e) => {
                         setPlan({

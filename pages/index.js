@@ -17,9 +17,11 @@ const Dashboard = () => {
     }, [])
 
     const getUserPlan = async () => {
-        const user = await userService.getById(userService.getId());
-        if(user.data !== null){
-            setName(user.data.name)
+        if(userService.getId() !== null){
+            const user = await userService.getById(userService.getId());
+            if(user.data !== null){
+                setName(user.data.name)
+            }
         }
     }
 

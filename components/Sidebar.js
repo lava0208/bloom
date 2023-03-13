@@ -30,18 +30,22 @@ const Sidebar = () => {
     const [name, setName] = useState("");
     const size = useWindowSize();
 
+    const router = useRouter();
+
     useEffect(() => {
         getUserPlan();
     }, [])
 
     const getUserPlan = async () => {
-        const user = await userService.getById(userService.getId());
-        if (user.data !== null) {
-            setName(user.data.name)
+        if(userService.getId() === null){
+            router.push("/account/login")
+        }else{
+            const user = await userService.getById(userService.getId());
+            if (user.data !== null) {
+                setName(user.data.name)
+            }
         }
     }
-
-    const router = useRouter();
 
     const logout = () => {
         swal({

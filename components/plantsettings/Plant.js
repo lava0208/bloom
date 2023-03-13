@@ -11,7 +11,7 @@ import styles from "~styles/components/plantsettings/plants.module.scss";
 
 const Plant = (props) => {
     const [plant, setPlant] = useState({
-        user_id: "",
+        userid: "",
         name: "",
         species: "",
         description: "",
@@ -125,7 +125,7 @@ const Plant = (props) => {
                     icon: "warning",
                 });
             }else{
-                plant.user_id = userService.getId();
+                plant.userid = userService.getId();
                 plant.image = downloadURL;
                 uploadPlant();
             }                                  
@@ -152,7 +152,7 @@ const Plant = (props) => {
                         {downloadURL ? (
                             <img src={downloadURL} alt="plant" />
                         ) : (
-                            plant.image && (
+                            plant && plant.image && (
                                 <img src={plant.image} alt="plant" />
                             )                            
                         )}
@@ -168,7 +168,7 @@ const Plant = (props) => {
                     <input
                         type="text"
                         className={styles.input}
-                        value={plant.name}
+                        value={plant ? plant.name : ""}
                         onChange={(e) => {
                             setPlant({
                                 ...plant,
@@ -180,7 +180,7 @@ const Plant = (props) => {
                     <input
                         type="text"
                         className={styles.input}
-                        value={plant.species}
+                        value={plant ? plant.species : ""}
                         onChange={(e) => {
                             setPlant({
                                 ...plant,
@@ -192,7 +192,7 @@ const Plant = (props) => {
                     <textarea
                         rows="3"
                         className={styles.input}
-                        value={plant.description}
+                        value={plant ? plant.description : ""}
                         onChange={(e) => {
                             setPlant({
                                 ...plant,
@@ -209,7 +209,7 @@ const Plant = (props) => {
                     <input
                         type="number"
                         className={styles.input}
-                        value={plant.earliest_seed}
+                        value={plant ? plant.earliest_seed : ""}
                         onChange={(e) => {
                             setPlant({
                                 ...plant,
@@ -221,7 +221,7 @@ const Plant = (props) => {
                     <input
                         type="number"
                         className={styles.input}
-                        value={plant.latest_seed}
+                        value={plant ? plant.latest_seed : ""}
                         onChange={(e) => {
                             setPlant({
                                 ...plant,
@@ -233,7 +233,7 @@ const Plant = (props) => {
                     <input
                         type="number"
                         className={styles.input}
-                        value={plant.pinch}
+                        value={plant ? plant.pinch : ""}
                         onChange={(e) => {
                             setPlant({
                                 ...plant,
@@ -245,7 +245,7 @@ const Plant = (props) => {
                     <input
                         type="number"
                         className={styles.input}
-                        value={plant.pot_on}
+                        value={plant ? plant.pot_on : ""}
                         onChange={(e) => {
                             setPlant({
                                 ...plant,
@@ -257,7 +257,7 @@ const Plant = (props) => {
                     <input
                         type="number"
                         className={styles.input}
-                        value={plant.harden}
+                        value={plant ? plant.harden : ""}
                         onChange={(e) => {
                             setPlant({
                                 ...plant,
@@ -269,7 +269,7 @@ const Plant = (props) => {
                     <input
                         type="number"
                         className={styles.input}
-                        value={plant.transplant}
+                        value={plant ? plant.transplant : ""}
                         onChange={(e) => {
                             setPlant({
                                 ...plant,
@@ -282,7 +282,7 @@ const Plant = (props) => {
                     <input
                         type="number"
                         className={styles.input}
-                        value={plant.maturity_early}
+                        value={plant ? plant.maturity_early : ""}
                         onChange={(e) => {
                             setPlant({
                                 ...plant,
@@ -294,7 +294,7 @@ const Plant = (props) => {
                     <input
                         type="number"
                         className={styles.input}
-                        value={plant.maturity_late}
+                        value={plant ? plant.maturity_late : ""}
                         onChange={(e) => {
                             setPlant({
                                 ...plant,
@@ -307,8 +307,8 @@ const Plant = (props) => {
                         <input
                             type="checkbox"
                             id="rebloom"
-                            value={plant.rebloom}
-                            checked={plant.rebloom}
+                            value={plant ? plant.rebloom : ""}
+                            checked={plant ? plant.rebloom : false}
                             onChange={(e) => {
                                 setPlant({
                                     ...plant,
@@ -320,7 +320,7 @@ const Plant = (props) => {
                     <h5 className="mt-3">Transplant Note</h5>
                     <textarea
                         rows="3"
-                        value={plant.transplant_note}
+                        value={plant ? plant.transplant_note : ""}
                         onChange={(e) => {
                             setPlant({
                                 ...plant,
@@ -331,7 +331,7 @@ const Plant = (props) => {
                     <h5 className="mt-3">Pinch Note</h5>
                     <textarea
                         rows="3"
-                        value={plant.pinch_note}
+                        value={plant ? plant.pinch_note : ""}
                         onChange={(e) => {
                             setPlant({
                                 ...plant,
@@ -346,7 +346,7 @@ const Plant = (props) => {
                     <input
                         type="number"
                         className={styles.input}
-                        value={plant.direct_seed}
+                        value={plant ? plant.direct_seed : ""}
                         onChange={(e) => {
                             setPlant({
                                 ...plant,
@@ -358,7 +358,7 @@ const Plant = (props) => {
                     <input
                         type="number"
                         className={styles.input}
-                        value={plant.direct_seed_pinch}
+                        value={plant ? plant.direct_seed_pinch : ""}
                         onChange={(e) => {
                             setPlant({
                                 ...plant,
@@ -371,7 +371,7 @@ const Plant = (props) => {
                     <input
                         type="number"
                         className={styles.input}
-                        value={plant.depth}
+                        value={plant ? plant.depth : ""}
                         onChange={(e) => {
                             setPlant({
                                 ...plant,
@@ -383,7 +383,7 @@ const Plant = (props) => {
                     <input
                         type="number"
                         className={styles.input}
-                        value={plant.cold_stratify}
+                        value={plant ? plant.cold_stratify : ""}
                         onChange={(e) => {
                             setPlant({
                                 ...plant,
@@ -394,8 +394,8 @@ const Plant = (props) => {
                     <h6 className="d-flex align-items-center">
                         <label htmlFor="light">Light for germination</label>
                         <input type="checkbox" id="light"
-                            value={plant.light}
-                            checked={plant.light}
+                            value={plant ? plant.light : ""}
+                            checked={plant ? plant.light : false}
                             onChange={(e) => {
                                 setPlant({
                                     ...plant,
@@ -407,7 +407,7 @@ const Plant = (props) => {
                     <h5 className="mt-3">Indoor Seed Note</h5>
                     <textarea
                         rows="3"
-                        value={plant.indoor_seed_note}
+                        value={plant ? plant.indoor_seed_note : ""}
                         onChange={(e) => {
                             setPlant({
                                 ...plant,
@@ -418,7 +418,7 @@ const Plant = (props) => {
                     <h5 className="mt-3">Direct Seed Note</h5>
                     <textarea
                         rows="3"
-                        value={plant.direct_seed_note}
+                        value={plant ? plant.direct_seed_note : ""}
                         onChange={(e) => {
                             setPlant({
                                 ...plant,
@@ -429,7 +429,7 @@ const Plant = (props) => {
                     <h5>Pot On Note</h5>
                     <textarea
                         rows="3"
-                        value={plant.pot_on_note}
+                        value={plant ? plant.pot_on_note : ""}
                         onChange={(e) => {
                             setPlant({
                                 ...plant,
@@ -440,7 +440,7 @@ const Plant = (props) => {
                     <h5>Harvest Note</h5>
                     <textarea
                         rows="3"
-                        value={plant.harvest_note}
+                        value={plant ? plant.harvest_note : ""}
                         onChange={(e) => {
                             setPlant({
                                 ...plant,

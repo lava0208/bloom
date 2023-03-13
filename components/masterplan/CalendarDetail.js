@@ -24,20 +24,19 @@ const CalendarDetail = (props) => {
 
         const _tasks = await taskService.getByPlantingId(_task.data.planting_id);
         const tmpIndex = _tasks.data.findIndex(x => x._id === props.taskId);
-        // if(tmpIndex >= 0 && tmpIndex < _tasks.data.length - 1){
         if(tmpIndex >= 0){
             const _nextItem = _tasks.data[tmpIndex + 1];
             if(_nextItem == undefined){
                 setNoNextTask("Done for the Season!") 
             }else{
                 setNextTask(_nextItem);
-                setDuration(calcDuration(_nextItem.scheduled_at, _task.data.scheduled_at))
+                setDuration(calcDuration(_nextItem.scheduled_at, _task.data.scheduled_at, _task.data.duration))
             }
         }
     }
 
-    const calcDuration = (date1, date2) => {
-        return moment(date1).diff(moment(date2), 'days');
+    const calcDuration = (date1, date2, duration) => {
+        return moment(date1).diff(moment(date2), 'days') - duration;
     }
 
     const getPlant = async () => {
@@ -59,9 +58,9 @@ const CalendarDetail = (props) => {
                 <div className={styles.noteContainer}>
                     <div className={styles.noteImage}>
                         {
-                            plant.image && (
+                            plant ? plant.image && (
                                 <img src={plant.image } alt="image" />
-                            )
+                            ) : ''
                         }
                     </div>
                     <div className={styles.noteInfo}>
@@ -76,7 +75,7 @@ const CalendarDetail = (props) => {
                             {
                                 (task.title) === "Seed Indoors" ? "Seed " + plant.name + " Indoors" : 
                                 (task.title) === "Direct Seed/Sow" ? "Direct " + plant.name + " Seed/Sow" :
-                                task.title + " " + plant.name
+                                plant && plant.name ? task.title + " " + plant.name : task.title
                             }
                         </h3>
                         <h5>{task ? task.note : ""}</h5>

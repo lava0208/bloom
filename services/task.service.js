@@ -1,4 +1,5 @@
 import { apiUrl } from 'config';
+import { userService } from './user.service';
 
 export const taskService = {
     getAll,
@@ -15,7 +16,7 @@ export const taskService = {
 const baseUrl = `${apiUrl}/tasks`;
 
 async function getAll() {
-    const response = await fetch(`${baseUrl}`, {
+    const response = await fetch(`${baseUrl}?userid=${userService.getId()}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json"
@@ -25,7 +26,7 @@ async function getAll() {
 }
 
 async function getAllByDate() {
-    const response = await fetch(`${baseUrl}?date=all`, {
+    const response = await fetch(`${baseUrl}?date=all&userid=${userService.getId()}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json"

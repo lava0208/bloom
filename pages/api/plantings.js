@@ -40,7 +40,7 @@ function createTasks(planting, plant, plan){
     let seed_indoors_date;
     let direct_seed_date;
     let pinch_date;
-    if(planting.direct_indoors){        
+    if(planting.direct_indoors){
         switch (planting.harvest) {
             case "Early":
                 seed_indoors_date = moment(last_frost).subtract(_earliest_indoor_seed, 'days').format('YYYY/MM/DD');
@@ -126,6 +126,7 @@ function createTasks(planting, plant, plan){
         for (var i=0; i<titleArr2.length; i++){
             var taskObj = {
                 planting_id: planting._id,
+                userid: plan.userid,
                 title: titleArr2[i],
                 scheduled_at: scheduleArr2[i],
                 duration: durationArr2[i],
@@ -174,7 +175,7 @@ export default async function handler(req, res) {
                 let _planting = await db.collection("plantings").findOne({plant_id: req.query.plantid});
                 return res.json({ status: true, data: _planting });
             }else{
-                let plantings = await db.collection("plantings").find({}).toArray();
+                let plantings = await db.collection("plantings").find({userid: req.query.userid}).toArray();
                 await Promise.all(plantings.map(async (elem) => {
                     try {
                       elem.image = await getPlantImg(elem.plant_id)  
@@ -210,7 +211,7 @@ export default async function handler(req, res) {
 
             await taskService.update(req.query.id , createTasks(req.body, _plant, _plan));
 
-            return res.json({ status: true, message: 'Planting is updated successfully. Refresh the page.' });
+            return res.json({ status: true, message: 'Planting is updated successfully.' });
 
         //... delete a planting
         case "DELETE":

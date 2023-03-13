@@ -18,6 +18,7 @@ const CurrentPlan = (props) => {
     const [activeHarvest, setActiveHarvest] = useState(-1);
 
     const [planting, setPlanting] = useState({
+        userid: "",
         plan_id: "",
         plant_id: props.plantId,
         seeds: 0,
@@ -56,6 +57,7 @@ const CurrentPlan = (props) => {
         var _plan = await planService.getByUserId(userService.getId());
         var _plant = await plantService.getById(props.plantId);
         var _planting = { ...planting };
+        _planting.userid = userService.getId();
         _planting.plan_id = _plan ? _plan.data._id : "";
         _planting.name = _plant ? _plant.data.name : "";
         _planting.species = _plant ? _plant.data.species : "";

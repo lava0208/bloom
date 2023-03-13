@@ -16,47 +16,62 @@ export const userService = {
 const baseUrl = `${apiUrl}/auth`;
 
 async function getById(id) {
-    const response = await fetch(`${baseUrl}/user?id=` + id, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json"
-        }
-    })
-    return response.json();
+    try {
+        const response = await fetch(`${baseUrl}/user?id=` + id, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        return response.json();
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 async function login(params) {
-    const response = await fetch(`${baseUrl}/user`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(params)
-    })
-    return response.json();
+    try {
+        const response = await fetch(`${baseUrl}/user`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(params)
+        })
+        return response.json();
+    } catch (error) {
+        console.log(error)
+    }
 }
 
-
 async function register(params) {
-    const response = await fetch(`${baseUrl}/register`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(params)
-    })
-    return response.json();
+    try {
+        const response = await fetch(`${baseUrl}/register`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(params)
+        })
+        return response.json();
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 async function update(id, params) {
-    const response = await fetch(`${baseUrl}/user?id=` + id, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(params)
-    })
-    return response.json();
+    try {
+        const response = await fetch(`${baseUrl}/user?id=` + id, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(params)
+        })
+        return response.json();
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 // prefixed with underscored because delete is a reserved word in javascript

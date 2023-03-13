@@ -1,4 +1,5 @@
 import { apiUrl } from 'config';
+import { userService } from './user.service';
 
 export const plantingService = {
     getAll,
@@ -12,7 +13,7 @@ export const plantingService = {
 const baseUrl = `${apiUrl}/plantings`;
 
 async function getAll() {
-    const response = await fetch(`${baseUrl}`, {
+    const response = await fetch(`${baseUrl}?userid=${userService.getId()}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json"

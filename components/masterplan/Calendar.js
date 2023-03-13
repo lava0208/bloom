@@ -33,7 +33,7 @@ const CalendarTab = () => {
             var taskObj = {
                 id: element._id,
                 start: moment(element.scheduled_at).toDate(),
-                end: moment(element.scheduled_at).toDate(),
+                end: moment(element.scheduled_at).add(element.duration, "days").toDate(),
                 title: element.title,
                 type: element.type,
                 note: element.note,

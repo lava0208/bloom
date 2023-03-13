@@ -22,26 +22,28 @@ export default async function handler(req, res) {
                 return res.json({ status: true, data: tasks });
             }else if(req.query.date){
                 let data = {};
-                data.today = await db.collection("tasks").find({scheduled_at: moment().format('YYYY/MM/DD')}).sort({scheduled_at: 1}).toArray();
-                data.tomorrow = await db.collection("tasks").find({scheduled_at: moment().add(1, 'days').format('YYYY/MM/DD')}).sort({scheduled_at: 1}).toArray();
+                data.today = await db.collection("tasks").find({scheduled_at: moment().format('YYYY/MM/DD'), userid: req.query.userid}).sort({scheduled_at: 1}).toArray();
+                data.tomorrow = await db.collection("tasks").find({scheduled_at: moment().add(1, 'days').format('YYYY/MM/DD'), userid: req.query.userid}).sort({scheduled_at: 1}).toArray();
                 data.week = await db.collection("tasks").find({
                     scheduled_at: {
                         $gt: moment().startOf('week').format('YYYY/MM/DD'),
                         $lt: moment().endOf('week').format('YYYY/MM/DD')
-                    }
+                    },
+                    userid: req.query.userid
                 }).sort({scheduled_at: 1}).toArray();
                 data.nextweek = await db.collection("tasks").find({
                     scheduled_at: {
                         $gt: moment().format('YYYY/MM/DD'),
                         $lt: moment().add(6, 'days').format('YYYY/MM/DD')
-                    }
+                    },
+                    userid: req.query.userid
                 }).sort({scheduled_at: 1}).toArray();
-                data.overdue = await db.collection("tasks").find({scheduled_at: {$gte: "2023/01/01", $lt: moment().format('YYYY/MM/DD')}, type: "incomplete"}).sort({scheduled_at: 1}).toArray();
-                data.season = await db.collection("plantings").aggregate([{ $group:{ _id : null, sum : { $sum: "$seeds" } }}]).toArray();
-                data.all = await db.collection("tasks").find({}).sort({scheduled_at: 1}).toArray();
+                data.overdue = await db.collection("tasks").find({scheduled_at: {$gte: "2023/01/01", $lt: moment().format('YYYY/MM/DD')}, type: "incomplete", userid: req.query.userid}).sort({scheduled_at: 1}).toArray();
+                data.season = await db.collection("plantings").aggregate([{ $match: { userid: req.query.userid } }, { $group:{ _id : null, sum : { $sum: "$seeds" } }}]).toArray();
+                data.all = await db.collection("tasks").find({userid: req.query.userid}).sort({scheduled_at: 1}).toArray();
                 return res.json({ status: true, data: data });
             }else{
-                let tasks = await db.collection("tasks").find({}).sort({scheduled_at: 1}).toArray();
+                let tasks = await db.collection("tasks").find({userid: req.query.userid}).sort({scheduled_at: 1}).toArray();
                 return res.json({ status: true, data: tasks });
             }
 

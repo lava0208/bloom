@@ -49,7 +49,7 @@ export default async function handler(req, res) {
                     },
                 }
             );
-            return res.json({ status: true, message: 'The profile is updated successfully.' });
+            return res.json({ status: true, message: 'The profile is updated successfully. Refresh the page.' });
 
         //... delete user
         case "DELETE":
