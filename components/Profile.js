@@ -119,7 +119,7 @@ const Profile = () => {
         }
     }
 
-    const checkout =  async () => {
+    const checkoutProfile =  async () => {
         let stripePromise = null
 
         const getStripe = () => {
@@ -323,7 +323,7 @@ const Profile = () => {
                     isPro ? (
                         <button className={styles.button3 + " " + styles.button4}>Access Priority Support</button>
                     ) : (
-                        <button className={styles.button3} onClick={(() => checkout())}>Upgrade Now</button>
+                        <button className={styles.button3} onClick={() => checkoutProfile()}>Upgrade Now</button>
                     )
                 }
                 {

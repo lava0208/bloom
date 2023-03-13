@@ -25,7 +25,7 @@ const Payment = () => {
         }
     }
 
-    const checkout =  async () => {
+    const paymentcheckout =  async () => {
         let stripePromise = null
 
         const getStripe = () => {
@@ -82,7 +82,7 @@ const Payment = () => {
                         </div>
                         <div
                             className={styles1.proButtonContainer}
-                            onClick={(() => checkout())}
+                            onClick={() => paymentcheckout()}
                         >
                             <h5 className={styles.textUppercase}>go pro</h5>
                         </div>
