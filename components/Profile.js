@@ -5,7 +5,7 @@ import { userService } from "services";
 import bcrypt from "bcryptjs";
 import { Spinner } from "reactstrap";
 
-import { checkout } from "./ProfileCheckout";
+import { profilecheckout } from "./ProfileCheckout";
 
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 import { storage } from "firebaseConfig";
@@ -299,7 +299,7 @@ const Profile = () => {
                         <button className={styles.button3 + " " + styles.button4}>Access Priority Support</button>
                     ) : (
                         <button className={styles.button3} onClick={(() => 
-                            checkout({
+                            profilecheckout({
                                 lineItems: [
                                     {
                                         price: "price_1MkWysIDhuOwOk66RmgdkCAJ",
